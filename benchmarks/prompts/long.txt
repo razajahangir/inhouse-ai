@@ -1,0 +1,523 @@
+Summarise the main points of this document.
+
+inhouse-ai
+A private, self-hosted AI assistant: architecture and operations guide
+Project name
+
+inhouse-ai (Docker Compose project name; containers are named inhouse-ai--1)
+
+Purpose
+
+Multi-user chat with local language models and retrieval-augmented generation (RAG) over private
+documents, running entirely on hardware the owner controls.
+
+Demo machines
+
+ThinkPad T14s (16 GB RAM, CPU only) and HP Victus (NVIDIA GeForce GTX 1650, 4 GB VRAM,
+Ubuntu).
+
+Production target
+
+NVIDIA DGX Spark (GB10 Grace Blackwell, 128 GB unified memory, ARM64) running vLLM instead
+of Ollama.
+
+Design rule
+
+Build on established open-source projects. Write custom code only where testing shows it is needed.
+
+1. Architecture at a glance
+Users reach Open WebUI through a Cloudflare Tunnel. Open WebUI never talks to the model server directly: every
+model request goes through LiteLLM, a gateway that maps friendly model names to real backends. Postgres
+stores users, chats and document vectors. Every service sits on one private Docker network.
+Browser
+| HTTPS (Cloudflare Access checks identity first)
+v
+Cloudflare edge <----outbound tunnel---- cloudflared (container)
+|
+v
+open-webui :8080
+(chat UI, login, RAG)
+|
+|
+OpenAI-style API
+|
+| SQL + pgvector
+v
+v
+litellm :4000
+postgres :5432
+|
+v
+ollama :11434 --> GPU (demo)
+(vLLM on the DGX Spark in production)
+All boxes live on one private Docker bridge network called spark-net.
+
+2. Project files
+inhouse-ai/
+|-- docker-compose.yaml
+|-- .env
+|-- .env.example
+|-- .gitignore
+|-- README.md
+|-- litellm/
+|
+`-- config.yaml
+`-- models/
+
+all services, network and volumes
+real secrets and model names (never committed)
+safe template to copy
+excludes .env and models/
+step-by-step setup guide
+maps model names to backends
+downloaded model weights (host folder, not in Git)
+
+File
+
+What it does
+
+docker-compose.yaml
+
+Describes the whole stack: six services, one network (spark-net) and two named volumes. Docker
+Compose reads it and creates everything.
+
+.env
+
+Holds values that Compose substitutes into the file wherever it sees ${VARIABLE}. Contains
+POSTGRES_USER, POSTGRES_PASSWORD, POSTGRES_DB, WEBUI_SECRET_KEY,
+LITELLM_MASTER_KEY, CHAT_MODEL, EMBED_MODEL and
+CLOUDFLARE_TUNNEL_TOKEN.
+
+.env.example
+
+The same file with placeholder values. Safe to share and commit.
+
+inhouse-ai architecture overview
+
+Page 1
+
+File
+
+What it does
+
+litellm/config.yaml
+
+The only place that knows where models actually run. Defines the names local-chat and
+local-embed and the backend each one points to.
+
+models/
+
+A host folder bind-mounted into the Ollama container so model files survive container deletion and
+are easy to see, back up and copy.
+
+3. The six services
+Service
+
+Image
+
+Role
+
+Reached at
+
+postgres
+
+pgvector/pgvector:pg16
+
+Database for Open WebUI (users, chats, settings) and
+vector store for document embeddings via the pgvector
+extension.
+
+postgres:5432
+
+ollama
+
+ollama/ollama
+
+Runs the language model on the demo laptops. Replaced ollama:11434
+by vLLM on the DGX Spark.
+
+ollama-init
+
+ollama/ollama
+
+One-shot job. Waits until Ollama is healthy, pulls the chat
+and embedding models, then exits. restart is set to "no".
+
+(none)
+
+litellm
+
+ghcr.io/berriai/litellm
+
+Gateway. Open WebUI asks for local-chat or
+local-embed; LiteLLM forwards to the real backend. Adds
+keys, rate limits, timeouts and fallbacks.
+
+litellm:4000
+
+open-webui
+
+ghcr.io/open-webui/openwebui
+
+The application users see: chat, login, roles, knowledge
+bases and built-in RAG with citations.
+
+open-webui:8080
+(also 127.0.0.1:3000
+on the host)
+
+cloudflared
+
+cloudflare/cloudflared
+
+Opens an outbound-only tunnel to Cloudflare so users
+can reach Open WebUI without any open inbound port.
+
+(outbound only)
+
+How a chat message travels
+• The user types a message in Open WebUI. Open WebUI sends an OpenAI-style request to http://litellm:4000/v1
+with the LiteLLM master key.
+
+• LiteLLM looks up the model name local-chat in config.yaml and forwards the request to http://ollama:11434.
+• Ollama runs the model, on the GPU when one is available, and streams tokens back through LiteLLM to the
+browser.
+
+• Open WebUI stores the conversation in Postgres.
+
+Why a gateway sits in the middle
+Open WebUI only knows the names local-chat and local-embed. To move from Ollama to vLLM on the DGX Spark,
+only litellm/config.yaml changes. Open WebUI, Postgres and the tunnel stay exactly as they are.
+
+4. Network and security
+Topic
+
+How it works here
+
+Private network
+
+The network spark-net uses the bridge driver: a virtual switch inside Linux. Each container gets a
+private IP on it (for example 172.18.0.x).
+
+Service discovery
+
+Docker runs a built-in DNS server at 127.0.0.11 inside each container. Services find each other by
+name (litellm, ollama, postgres), because IP addresses change on restart. Containers must never use
+127.0.0.1 to reach each other, since that means the container itself.
+
+No published ports
+
+Only open-webui has a ports entry, and it is bound to 127.0.0.1:3000, so only the same machine can
+open it. litellm, ollama and postgres show 4000/tcp, 11434/tcp and 5432/tcp with no host mapping, so
+they are reachable only inside the Docker network.
+
+Why not publish ports
+
+Docker writes its own iptables rules, so published ports can bypass a UFW firewall. With no published
+ports there is nothing to bypass.
+
+inhouse-ai architecture overview
+
+Page 2
+
+Topic
+
+How it works here
+
+Cloudflare Tunnel
+
+cloudflared connects outbound to Cloudflare and forwards one hostname (for example
+chat.yourdomain.com) to http://open-webui:8080. The firewall can keep every inbound port closed.
+
+Cloudflare Access
+
+An identity policy on that hostname decides who may even see the login page (for example, only listed
+email addresses). Without it, the login page would be public.
+
+Secrets
+
+Every secret is generated with openssl rand -hex 32 and lives only in .env. The LiteLLM master key
+must start with sk-. .env is excluded from Git.
+
+Sign-ups
+
+ENABLE_SIGNUP is true for the first start so the first account becomes admin. It is then set to false so
+only the admin adds users.
+
+Alternative access
+
+Tailscale can replace the tunnel for a fully private network: traffic is end-to-end encrypted and Tailscale
+sees only metadata. Cloudflare decrypts traffic at its edge, which is a trade-off to discuss with a
+confidential-data client.
+
+5. Storage
+Name
+
+Kind
+
+Holds
+
+Survives docker
+compose down?
+
+Deleted by down
+-v?
+
+postgres-data
+
+Named volume (under
+/var/lib/docker/volumes)
+
+Users, chats, settings, vectors
+
+Yes
+
+Yes
+
+webui-data
+
+Named volume
+
+Open WebUI uploaded files
+and local data
+
+Yes
+
+Yes
+
+./models
+
+Bind mount (host folder)
+
+Ollama model weights (blobs
+and manifests)
+
+Yes
+
+No
+
+A container's own filesystem is temporary: deleting or recreating the container loses anything written inside it.
+Volumes live on the host disk, outside the container, so data survives. A reboot never removes containers; they
+restart automatically because the services use restart: unless-stopped. The ollama service mounts only ./models
+into /root/.ollama/models, so Ollama's private key and cache stay inside the container.
+
+6. GPU acceleration
+Layer
+
+What it is
+
+Where it lives
+
+NVIDIA driver
+
+The only software that talks to the GPU hardware. nvidia-smi is its tool. Host Linux kernel
+
+NVIDIA Container Toolkit
+
+Registers an nvidia runtime in /etc/docker/daemon.json (via sudo
+nvidia-ctk runtime configure --runtime=docker). When a container asks
+for a GPU, it mounts the GPU device files and driver libraries into the
+container.
+
+Host
+
+deploy block in Compose
+
+The Compose equivalent of docker run --gpus all. Reserves devices
+handled by the nvidia driver, count all, capability gpu.
+
+docker-compose.yaml,
+ollama service
+
+Ollama image
+
+Already bundles the CUDA libraries, which is why the image is about 3
+GB. The models are not inside the image.
+
+Container
+
+deploy:
+resources:
+reservations:
+devices:
+- driver: nvidia
+count: all
+capabilities: [gpu]
+
+A container shares the host kernel, so it never needs its own driver. In this block, driver: nvidia means "use the
+nvidia runtime we registered", not a driver to install. A reservation is a guarantee, so Compose refuses to start the
+container if the GPU is unavailable instead of silently falling back to the CPU.
+
+inhouse-ai architecture overview
+
+Page 3
+
+7. Retrieval-augmented generation (RAG)
+• Storage: VECTOR_DB is pgvector, so document embeddings live in the same Postgres database as
+everything else.
+
+• Embeddings: RAG_EMBEDDING_ENGINE is openai pointing at LiteLLM, with the model name local-embed,
+which maps to nomic-embed-text on Ollama.
+
+• Flow: upload a document to a knowledge base; Open WebUI parses and chunks it and stores the embeddings.
+At question time it embeds the question, retrieves the closest chunks, adds them to the prompt and the model
+answers with citations back to the source.
+
+• Access control: knowledge bases can be private or shared with user groups, which provides the data-isolation
+demo: a second user cannot see or query another user's knowledge base.
+
+• Decision: start with Open WebUI's built-in RAG. Add a custom ingestion service (Gmail and Dropbox over
+OAuth, uploading into knowledge bases through the API) only if testing on the client's real documents shows a
+need.
+
+How to test it
+• Create a knowledge base (Workspace, Knowledge), set it private and upload two or three messy documents.
+• In a new chat, type # and select the knowledge base.
+• Ask questions whose answers you already know. Check that the answer is correct, that a citation appears and
+that the cited chunk matches.
+
+• Ask something that is not in the documents and confirm the model says so instead of inventing an answer.
+• Log in as a second user and confirm the private knowledge base is invisible.
+
+8. Measured performance on the HP Victus
+Measurement
+
+Result
+
+GPU
+
+NVIDIA GeForce GTX 1650, 4096 MiB VRAM, driver 595.99.02, CUDA 13.2
+
+Chat model
+
+qwen3:4b-instruct (3.4 GB loaded at an 8192-token context)
+
+Placement
+
+22% CPU / 78% GPU: the model does not fully fit in 4 GB of VRAM
+
+Generation speed (eval rate)
+
+23.29 tokens per second
+
+Prompt reading speed (prompt eval rate)
+
+58.48 tokens per second
+
+The prompt reading speed matters for RAG, because retrieved chunks are added to the prompt: roughly every
+thousand extra prompt tokens adds about 17 seconds before the first word appears at this rate. Remedies, in
+order: lower Top K to 3, use a smaller model that fits fully on the GPU such as llama3.2:3b, and warm the model up
+before a demo.
+
+Terms
+Term
+
+Meaning
+
+Time to first token
+
+How long a user waits between pressing send and seeing the first word.
+
+Throughput
+
+Total tokens per second the server produces across all users.
+
+KV cache
+
+The model's working memory for each conversation: stored keys and values for every token so far.
+It lives in GPU memory, and long prompts use a lot of it.
+
+Prefix caching
+
+Reusing the KV cache of an identical prompt beginning, so follow-up messages in a chat start
+faster.
+
+max-num-seqs (vLLM)
+
+A ceiling on requests processed at once; the real number also depends on how much KV cache fits
+in memory.
+
+inhouse-ai architecture overview
+
+Page 4
+
+9. Everyday commands
+docker compose up -d
+start everything in the background
+docker compose ps
+show service status
+docker compose logs -f litellm
+follow one service's logs
+docker compose restart litellm
+reload litellm/config.yaml
+docker compose up -d
+also needed after editing .env or the compose file
+docker compose exec ollama ollama ps see if the model runs on GPU or CPU
+docker compose exec ollama ollama list
+list downloaded models
+watch -n 1 nvidia-smi
+watch GPU use live
+docker compose down
+remove containers, keep data
+docker compose down -v
+remove containers AND named volumes (wipes Postgres)
+
+Config changes: LiteLLM reads config.yaml only at startup, so restart it after editing. Changes to
+docker-compose.yaml or .env need docker compose up -d so the container is recreated. Postgres reads its
+password only on its very first start; changing it later requires docker compose down -v. The model name appears
+in two places, CHAT_MODEL in .env and litellm/config.yaml, and they must match.
+
+10. Moving to the DGX Spark
+Step
+
+Change
+
+1. Model server
+
+Replace the ollama and ollama-init services with NVIDIA's vLLM container built for the Spark, with GPU
+access and the model folder mounted read-only from the host.
+
+2. Gateway
+
+In litellm/config.yaml, point local-chat at the vLLM service (hosted_vllm model, api_base
+http://vllm:8000/v1). Open WebUI does not change.
+
+3. Architecture
+
+The Spark is ARM64. Official images used here publish ARM64 builds; any custom image needs one too
+(docker buildx with --platform linux/amd64,linux/arm64).
+
+4. Hardening
+
+Pin every image to an exact version tag. Remove the 127.0.0.1:3000 port binding. Run as non-root where
+possible.
+
+5. Benchmarking
+
+Use vllm bench serve with RAG-sized prompts at 1, 5, 10, 20 and 50 concurrent users. Set
+max-num-seqs and LiteLLM parallel limits from the highest concurrency that meets the target (for
+example first token under 2 seconds).
+
+6. Operations
+
+Add Prometheus and Grafana (vLLM exposes /metrics), Langfuse for traces, nightly Postgres backups,
+and a Ragas or DeepEval test set of 30 to 50 questions.
+
+7. Repeatability
+
+One Compose file with pinned versions plus one .env per client, so each new deployment is: git pull, fill in
+.env, docker compose up -d.
+
+11. Known gaps and next phases
+• Gmail and Dropbox integrations (OAuth sync into knowledge bases) are not built yet.
+• Scheduled background ingestion jobs and handling of edits and deletions are not built yet.
+• Role-based access beyond Open WebUI's built-in admin, user and group model is not built yet.
+• Agent framework (for example OpenClaw or Hermes Agent) is not added; it would be one more container on
+spark-net pointed at LiteLLM, with scoped OAuth tokens and approval before risky actions.
+
+• Monitoring, evaluation and backups are planned for the production phase.
+• Licensing review (Open WebUI branding terms and model licences) is needed before reselling.
+
+inhouse-ai architecture overview
+
+Page 5

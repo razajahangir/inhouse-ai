@@ -1,0 +1,136 @@
+# Hardware-neutral self-hosted AI stack, from CPU-only hosts to GPU servers.
+# Swap model backends through LiteLLM configuration or a Compose override.
+#
+# Security model:
+#   - All services share one private bridge network and talk by service name.
+#   - NOTHING is published to the network. The only way in from outside is the
+#     Cloudflare Tunnel, which connects OUTBOUND to Cloudflare and forwards one
+#     hostname to open-webui:8080. Protect that hostname with Cloudflare Access.
+#   - Open WebUI is also bound to 127.0.0.1:3000 for local debugging only.
+
+name: inhouse-ai
+
+networks:
+  inhouse-net:
+    name: inhouse-net
+    driver: bridge
+
+volumes:
+  postgres-data:
+  webui-data:
+
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks: [inhouse-net]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  ollama:
+    image: ollama/ollama:0.40.13
+    restart: unless-stopped
+    environment:
+      OLLAMA_KEEP_ALIVE: "24h"    # keep the model loaded so the demo stays fast
+      OLLAMA_CONTEXT_LENGTH: "8192"
+    volumes:
+      - ./models:/root/.ollama/models   # model weights on the host; Ollama's key and cache stay in the container
+    networks: [inhouse-net]
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  # One-shot job: pulls the chat + embedding models into ./models, then exits.
+  ollama-init:
+    image: ollama/ollama:0.40.13
+    depends_on:
+      ollama:
+        condition: service_healthy
+    environment:
+      OLLAMA_HOST: "ollama:11434"
+    entrypoint: ["/bin/sh", "-c", "ollama pull ${CHAT_MODEL} && ollama pull ${EMBED_MODEL}"]
+    networks: [inhouse-net]
+    restart: "no"
+
+  litellm:
+    image: ghcr.io/berriai/litellm:v1.106.6
+    restart: unless-stopped
+    command: ["--config", "/app/config.yaml", "--port", "4000"]
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/litellm
+      LITELLM_MASTER_KEY: ${LITELLM_MASTER_KEY}
+      UI_USERNAME: admin
+      UI_PASSWORD: ${LITELLM_MASTER_KEY}
+    volumes:
+      - ./litellm/config.yaml:/app/config.yaml:ro
+    depends_on:
+      ollama:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    networks: [inhouse-net]
+
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:v0.12.5
+    restart: unless-stopped
+    environment:
+      WEBUI_SECRET_KEY: ${WEBUI_SECRET_KEY}
+      WEBUI_NAME: ${WEBUI_NAME}
+      ENABLE_SIGNUP: "true"          # first account becomes admin; turn off after creating it
+
+      # App database: Postgres instead of the default SQLite (needed for many users)
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+
+      # All model traffic goes through the LiteLLM gateway, never straight to Ollama
+      ENABLE_OLLAMA_API: "false"
+      OPENAI_API_BASE_URL: http://litellm:4000/v1
+      OPENAI_API_KEY: ${LITELLM_MASTER_KEY}
+
+      # RAG: vectors in pgvector, embeddings also served through LiteLLM
+      VECTOR_DB: pgvector
+      PGVECTOR_DB_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      RAG_EMBEDDING_ENGINE: openai
+      RAG_EMBEDDING_MODEL: local-embed
+      RAG_OPENAI_API_BASE_URL: http://litellm:4000/v1
+      RAG_OPENAI_API_KEY: ${LITELLM_MASTER_KEY}
+    volumes:
+      - webui-data:/app/backend/data
+    ports:
+      - "127.0.0.1:3000:8080"        # localhost only — never reachable from the LAN
+    depends_on:
+      postgres:
+        condition: service_healthy
+      litellm:
+        condition: service_started
+    networks: [inhouse-net]
+
+  # Outbound-only tunnel: no ports opened on the host or the firewall.
+  # Public hostname -> service is configured in the Cloudflare dashboard:
+  #   chat.<yourdomain>  ->  http://open-webui:8080
+  cloudflared:
+    image: cloudflare/cloudflared:2026.10.7
+    restart: unless-stopped
+    command: ["tunnel", "--no-autoupdate", "run"]
+    environment:
+      TUNNEL_TOKEN: ${CLOUDFLARE_TUNNEL_TOKEN}
+    depends_on:
+      - open-webui
+    networks: [inhouse-net]

@@ -1,0 +1,23 @@
+# Inhouse AI LiteLLM gateway: the only place that knows where models actually run.
+# Open WebUI asks for "local-chat" / "local-embed"; this file decides the backend.
+# For larger GPU servers, change api_base to the vLLM service (e.g. http://vllm:8000/v1,
+# model: hosted_vllm/<name>).
+
+model_list:
+  - model_name: local-chat
+    litellm_params:
+      model: ollama_chat/qwen3:4b-instruct          # keep in sync with CHAT_MODEL in .env
+      api_base: http://ollama:11434
+      timeout: 300
+
+  - model_name: local-embed
+    litellm_params:
+      model: ollama/nomic-embed-text       # keep in sync with EMBED_MODEL in .env
+      api_base: http://ollama:11434
+
+litellm_settings:
+  drop_params: true          # ignore OpenAI params the local backend doesn't support
+  request_timeout: 300
+
+general_settings:
+  master_key: os.environ/LITELLM_MASTER_KEY
