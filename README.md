@@ -57,6 +57,18 @@ tells you what your own hardware can actually do.
 
 ![Inhouse AI architecture](assets/architecture.png)
 
+### LiteLLM model gateway
+
+Manage deployed models and endpoints through LiteLLM's gateway.
+
+![LiteLLM model gateway](assets/litellm-model-gateway.png)
+
+### Open WebUI private chat
+
+Chat with local models in Open WebUI; prompts stay on your machine.
+
+![Open WebUI private chat](assets/open-webui-private-chat.png)
+
 ## Contents
 
 - [Security model](#security-model)
