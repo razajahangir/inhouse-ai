@@ -55,16 +55,7 @@ tells you what your own hardware can actually do.
 | `cloudflared`| cloudflare/cloudflared        | Outbound-only tunnel: the only way in from outside    |
 | `ollama-init`| ollama/ollama                 | One-shot job that downloads the models, then exits    |
 
-```
-Browser ──HTTPS──> Cloudflare Access ──> cloudflared ──> open-webui:8080
-                                                            │
-                                     ┌──────────────────────┼─────────────────┐
-                                     ▼                      ▼                 ▼
-                              litellm:4000          postgres:5432      (Docker network
-                                     │              (users, chats,       inhouse-net, no
-                                     ▼               vectors)            published ports)
-                              ollama:11434 ──> CPU/GPU  (or vLLM on bigger hardware)
-```
+![Inhouse AI architecture](assets/architecture.png)
 
 ## Contents
 
@@ -537,6 +528,7 @@ docker compose pull && docker compose up -d    # update images
 | Symptom | Likely cause / fix |
 |---|---|
 | `permission denied` on the Docker socket | You're not in the `docker` group yet: `sudo usermod -aG docker $USER`, then log out and in. |
+| Open WebUI says **"Backend Required"** or **"frontend only"** | Confirm `docker compose ps open-webui` shows the service running, then check `curl -i http://127.0.0.1:3000/api/config` returns `200`. Open `http://localhost:3000` locally, or make sure the Cloudflare hostname routes to `http://open-webui:8080`. If the API check returns `200` but the page still shows this message, hard-reload the page or clear site data for that hostname and try a private window; the browser may be using stale frontend assets or session data. If the check fails, inspect `docker compose logs --tail=100 open-webui`. |
 | No models in the Open WebUI picker | `ollama-init` still running, or the LiteLLM key in `.env` doesn't start with `sk-`. Check `docker compose logs litellm`. |
 | `model not found` | The model wasn't pulled, or `CHAT_MODEL` and `litellm/config.yaml` don't match. |
 | Tunnel URL shows a 502 error | Hostname service URL isn't `http://open-webui:8080`, or Open WebUI is still starting. |
