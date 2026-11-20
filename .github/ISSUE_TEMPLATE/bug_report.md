@@ -1,6 +1,6 @@
 ---
 name: Bug report
-about: Report a reproducible problem with Inhouse AI
+about: Report a reproducible problem with In-House AI
 title: "[Bug]: "
 labels: bug
 assignees: ""

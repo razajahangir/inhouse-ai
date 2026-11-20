@@ -1,4 +1,4 @@
-# Inhouse AI LiteLLM gateway: the only place that knows where models actually run.
+# In-House AI LiteLLM gateway: the only place that knows where models actually run.
 # Open WebUI asks for "local-chat" / "local-embed"; this file decides the backend.
 # For larger GPU servers, change api_base to the vLLM service (e.g. http://vllm:8000/v1,
 # model: hosted_vllm/<name>).

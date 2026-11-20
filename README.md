@@ -1,9 +1,9 @@
-# Inhouse AI
+# In-House AI
 
 **Your own ChatGPT-style assistant, running on your hardware, where your documents never
 leave your control.**
 
-Inhouse AI is a ready-to-run, self-hosted AI stack: multi-user chat, local language models,
+In-House AI is a ready-to-run, self-hosted AI stack: multi-user chat, local language models,
 and question-answering over your own documents with citations. One Docker Compose file, built
 entirely on established open-source projects. No AI provider sees your prompts or your files.
 
@@ -55,7 +55,7 @@ tells you what your own hardware can actually do.
 | `cloudflared`| cloudflare/cloudflared        | Outbound-only tunnel: the only way in from outside    |
 | `ollama-init`| ollama/ollama                 | One-shot job that downloads the models, then exits    |
 
-![Inhouse AI architecture](assets/architecture.png)
+![In-House AI architecture](assets/architecture.png)
 
 ### LiteLLM model gateway
 
@@ -81,7 +81,7 @@ Chat with local models in Open WebUI; prompts stay on your machine.
 
 ## Security model
 
-- Every service sits on the private Docker network `inhouse-net` and talks by service name.
+- Every service sits on the private Docker network `in-house-net` and talks by service name.
 - No port is published to the network. `cloudflared` makes an outbound connection to
   Cloudflare, so the firewall can keep every inbound port closed.
 - Cloudflare Access checks identity before anyone even sees the login page.
@@ -150,14 +150,14 @@ Skip this on a CPU-only machine, and remove the `deploy:` block from the `ollama
 ## Step 2: Get the project
 
 ```bash
-git clone https://github.com/<your-username>/inhouse-ai.git
-cd inhouse-ai
+git clone https://github.com/razajahangir/in-house-ai.git
+cd in-house-ai
 ```
 
 The layout:
 
 ```
-inhouse-ai/
+in-house-ai/
 ├── docker-compose.yaml     # all services, network and volumes
 ├── .env.example            # safe template; copy to .env
 ├── .gitignore              # excludes .env and models/
@@ -199,7 +199,7 @@ You need a domain whose DNS is managed by Cloudflare. (Prefer a fully private ne
 See [Swap a component](#swap-a-component) for Tailscale.)
 
 1. Cloudflare dashboard → **Zero Trust → Networks → Tunnels → Create a tunnel**.
-2. Choose **Cloudflared**, name it `inhouse-ai`, and pick **Docker** as the environment.
+2. Choose **Cloudflared**, name it `in-house-ai`, and pick **Docker** as the environment.
 3. Cloudflare shows a `docker run ... --token <long-token>` command. Copy **only the token**
    (it starts with `eyJ`) into `CLOUDFLARE_TUNNEL_TOKEN` in `.env`. Don't run that command.
 4. Add a **public hostname**:
@@ -382,7 +382,7 @@ Markdown results table, and saves a JSON results file under `benchmarks/results/
 only the Python standard library and connects over the private Docker network:
 
 ```bash
-docker run --rm --network inhouse-net \
+docker run --rm --network in-house-net \
   -v "$PWD/benchmarks:/bench" -w /bench python:3.12-slim \
   python bench.py --model qwen3:4b-instruct --runs 3
 ```
@@ -450,6 +450,8 @@ One opinionated stack that works, with clear exits:
 | Hardware | NVIDIA GPU | CPU only | Remove the `deploy:` block from `ollama` |
 | Vector store | pgvector in Postgres | Qdrant, Chroma | Open WebUI's `VECTOR_DB` settings |
 
+When using Tailscale Serve, the URL is `https://in-house-ai.<your-tailnet>.ts.net`.
+
 Trade-off to know: Cloudflare decrypts traffic at its edge; Tailscale only sees metadata.
 For confidential data, decide which you're comfortable with.
 
@@ -484,7 +486,7 @@ additional accelerator memory and parallel compute.
 
 ## Scope: what's deliberately not included
 
-Inhouse AI is the core you need to run a private assistant, and nothing more. Observability,
+In-House AI is the core you need to run a private assistant, and nothing more. Observability,
 evaluation and data-protection layers are left out on purpose: teams that self-host usually
 have their own preferences, and every extra layer is more to install, secure and maintain.
 
@@ -498,14 +500,14 @@ Good places to extend it, with your tools of choice:
 
 ## Need help?
 
-Want Inhouse AI deployed on your own hardware, adapted to your documents and tools, or
+Want In-House AI deployed on your own hardware, adapted to your documents and tools, or
 extended with monitoring and evaluation? Get in touch:
 [LinkedIn](https://www.linkedin.com/in/raza-jahangir) ·
 [Upwork](https://www.upwork.com/freelancers/developerraza)
 
 ## Third-party software
 
-Inhouse AI combines independently licensed software and models. Each component remains under
+In-House AI combines independently licensed software and models. Each component remains under
 its own licence; users must review and comply with the applicable licences and terms:
 
 - [Open WebUI](https://github.com/open-webui/open-webui): Open WebUI License (includes

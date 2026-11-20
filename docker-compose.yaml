@@ -1,4 +1,4 @@
-# Hardware-neutral self-hosted AI stack, from CPU-only hosts to GPU servers.
+# In-House AI: hardware-neutral self-hosted stack, from CPU-only hosts to GPU servers.
 # Swap model backends through LiteLLM configuration or a Compose override.
 #
 # Security model:
@@ -8,16 +8,17 @@
 #     hostname to open-webui:8080. Protect that hostname with Cloudflare Access.
 #   - Open WebUI is also bound to 127.0.0.1:3000 for local debugging only.
 
-name: inhouse-ai
+name: in-house-ai
 
 networks:
-  inhouse-net:
-    name: inhouse-net
+  in-house-net:
+    name: in-house-net
     driver: bridge
 
 volumes:
   postgres-data:
   webui-data:
+  tailscale-state:
 
 services:
   postgres:
@@ -29,7 +30,7 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - postgres-data:/var/lib/postgresql/data
-    networks: [inhouse-net]
+    networks: [in-house-net]
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 5s
@@ -44,7 +45,7 @@ services:
       OLLAMA_CONTEXT_LENGTH: "8192"
     volumes:
       - ./models:/root/.ollama/models   # model weights on the host; Ollama's key and cache stay in the container
-    networks: [inhouse-net]
+    networks: [in-house-net]
     deploy:
       resources:
         reservations:
@@ -57,6 +58,29 @@ services:
       interval: 10s
       timeout: 5s
       retries: 10
+  vllm:
+    image: vllm/vllm-openai:latest
+    profiles: ["vllm"]
+    restart: unless-stopped
+    command:
+      - --model=${VLLM_MODEL:-Qwen/Qwen2.5-0.5B-Instruct}
+      - --served-model-name=local-chat
+      - --dtype=half
+      - --max-model-len=4096
+      - --gpu-memory-utilization=0.80
+    environment:
+      HF_TOKEN: ${HF_TOKEN:-}
+    volumes:
+      - ./models/huggingface:/root/.cache/huggingface
+    ipc: host
+    networks: [in-house-net]
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
 
   # One-shot job: pulls the chat + embedding models into ./models, then exits.
   ollama-init:
@@ -67,7 +91,7 @@ services:
     environment:
       OLLAMA_HOST: "ollama:11434"
     entrypoint: ["/bin/sh", "-c", "ollama pull ${CHAT_MODEL} && ollama pull ${EMBED_MODEL}"]
-    networks: [inhouse-net]
+    networks: [in-house-net]
     restart: "no"
 
   litellm:
@@ -86,7 +110,7 @@ services:
         condition: service_healthy
       postgres:
         condition: service_healthy
-    networks: [inhouse-net]
+    networks: [in-house-net]
 
   open-webui:
     image: ghcr.io/open-webui/open-webui:v0.12.5
@@ -120,17 +144,35 @@ services:
         condition: service_healthy
       litellm:
         condition: service_started
-    networks: [inhouse-net]
+    networks: [in-house-net]
 
   # Outbound-only tunnel: no ports opened on the host or the firewall.
   # Public hostname -> service is configured in the Cloudflare dashboard:
   #   chat.<yourdomain>  ->  http://open-webui:8080
   cloudflared:
     image: cloudflare/cloudflared:2026.10.7
+    profiles: ["cloudflare"]
     restart: unless-stopped
     command: ["tunnel", "--no-autoupdate", "run"]
     environment:
       TUNNEL_TOKEN: ${CLOUDFLARE_TUNNEL_TOKEN}
     depends_on:
       - open-webui
-    networks: [inhouse-net]
+    networks: [in-house-net]
+
+    # Private access over your tailnet: no ports opened, end-to-end encrypted.
+  tailscale:
+    image: tailscale/tailscale:latest
+    profiles: ["tailscale"]
+    restart: unless-stopped
+    hostname: ${TS_HOSTNAME:-in-house-ai}
+    environment:
+      TS_AUTHKEY: ${TS_AUTHKEY}
+      TS_STATE_DIR: /var/lib/tailscale
+      TS_SERVE_CONFIG: /config/serve.json
+    volumes:
+      - tailscale-state:/var/lib/tailscale
+      - ./tailscale:/config:ro
+    depends_on:
+      - open-webui
+    networks: [in-house-net]

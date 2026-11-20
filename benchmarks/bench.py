@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Inhouse AI benchmark: repeatable speed numbers for an Ollama model.
+"""In-House AI benchmark: repeatable speed numbers for an Ollama model.
 
 Runs every prompt in prompts/*.txt against Ollama's API, discards a warm-up run,
 then averages N measured runs. Each run starts with a unique ID so Ollama's
@@ -13,7 +13,7 @@ Measures per prompt:
 
 Stdlib only. Ollama has no published port in this stack, so run it on the Docker network:
 
-  docker run --rm --network inhouse-net \
+  docker run --rm --network in-house-net \
     -v "$PWD/benchmarks:/bench" -w /bench python:3.12-slim \
     python bench.py --model qwen3:4b-instruct
 

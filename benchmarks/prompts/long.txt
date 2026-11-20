@@ -1,10 +1,10 @@
 Summarise the main points of this document.
 
-inhouse-ai
+in-house-ai
 A private, self-hosted AI assistant: architecture and operations guide
 Project name
 
-inhouse-ai (Docker Compose project name; containers are named inhouse-ai--1)
+in-house-ai (Docker Compose project name; containers are named in-house-ai-<service>-1)
 
 Purpose
 
@@ -50,10 +50,10 @@ postgres :5432
 v
 ollama :11434 --> GPU (demo)
 (vLLM on the DGX Spark in production)
-All boxes live on one private Docker bridge network called spark-net.
+All boxes live on one private Docker bridge network called in-house-net.
 
 2. Project files
-inhouse-ai/
+in-house-ai/
 |-- docker-compose.yaml
 |-- .env
 |-- .env.example
@@ -78,7 +78,7 @@ What it does
 
 docker-compose.yaml
 
-Describes the whole stack: six services, one network (spark-net) and two named volumes. Docker
+Describes the whole stack: six services, one network (in-house-net) and two named volumes. Docker
 Compose reads it and creates everything.
 
 .env
@@ -92,7 +92,7 @@ CLOUDFLARE_TUNNEL_TOKEN.
 
 The same file with placeholder values. Safe to share and commit.
 
-inhouse-ai architecture overview
+in-house-ai architecture overview
 
 Page 1
 
@@ -196,7 +196,7 @@ How it works here
 
 Private network
 
-The network spark-net uses the bridge driver: a virtual switch inside Linux. Each container gets a
+The network in-house-net uses the bridge driver: a virtual switch inside Linux. Each container gets a
 private IP on it (for example 172.18.0.x).
 
 Service discovery
@@ -216,7 +216,7 @@ Why not publish ports
 Docker writes its own iptables rules, so published ports can bypass a UFW firewall. With no published
 ports there is nothing to bypass.
 
-inhouse-ai architecture overview
+in-house-ai architecture overview
 
 Page 2
 
@@ -348,7 +348,7 @@ A container shares the host kernel, so it never needs its own driver. In this bl
 nvidia runtime we registered", not a driver to install. A reservation is a guarantee, so Compose refuses to start the
 container if the GPU is unavailable instead of silently falling back to the CPU.
 
-inhouse-ai architecture overview
+in-house-ai architecture overview
 
 Page 3
 
@@ -437,7 +437,7 @@ max-num-seqs (vLLM)
 A ceiling on requests processed at once; the real number also depends on how much KV cache fits
 in memory.
 
-inhouse-ai architecture overview
+in-house-ai architecture overview
 
 Page 4
 
@@ -513,11 +513,11 @@ One Compose file with pinned versions plus one .env per client, so each new depl
 • Scheduled background ingestion jobs and handling of edits and deletions are not built yet.
 • Role-based access beyond Open WebUI's built-in admin, user and group model is not built yet.
 • Agent framework (for example OpenClaw or Hermes Agent) is not added; it would be one more container on
-spark-net pointed at LiteLLM, with scoped OAuth tokens and approval before risky actions.
+in-house-net pointed at LiteLLM, with scoped OAuth tokens and approval before risky actions.
 
 • Monitoring, evaluation and backups are planned for the production phase.
 • Licensing review (Open WebUI branding terms and model licences) is needed before reselling.
 
-inhouse-ai architecture overview
+in-house-ai architecture overview
 
 Page 5

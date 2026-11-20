@@ -1,4 +1,4 @@
-# Contributing to Inhouse AI
+# Contributing to In-House AI
 
 ## Report an issue
 
