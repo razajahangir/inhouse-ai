@@ -401,7 +401,7 @@ benchmark row for your hardware.
 | Embedding model | `nomic-embed-text` |
 | Runtime | Ollama x.y.z (llama.cpp), context 8,192 tokens |
 
-The stack also runs on CPU only (ThinkPad T14s, 16 GB RAM); it is just slower on long prompts.
+The stack also runs on CPU only; results from a second machine are below.
 
 ### Example results: HP Victus (GTX 1650, 4 GB)
 
@@ -429,6 +429,38 @@ why bigger GPUs, workstations or unified-memory machines change the experience.
 
 Ran it on your hardware? Open a pull request adding a row: machine, GPU/VRAM, RAM, model,
 quantization, context length, and the five numbers above.
+
+### Example results: ThinkPad T14s (CPU only)
+
+| | |
+|---|---|
+| Machine | ThinkPad T14s Gen 2a, Ubuntu 26.04 |
+| CPU | AMD Ryzen 5 PRO 5650U (6 cores, 12 threads) |
+| RAM | 16 GB (about 14 GiB usable), no GPU |
+| Runtime | Ollama 0.40.13 (llama.cpp), 100% CPU, same `qwen3:4b-instruct` model |
+
+Settings: `qwen3:4b-instruct`, Q4_K_M, context 8,192, temperature 0, max 300 output tokens,
+warm model, no chat history. Only the Ollama service was running.
+
+| Prompt | Prompt tokens | Time to first token | Reading speed | Writing speed | Total time |
+|---|---|---|---|---|---|
+| Short | 25 | 0.57 s | n/a* | 13.7 ± 0.1 tok/s | 2.3 s |
+| Medium | 41 | 0.93 s | 46.0 tok/s | 12.7 ± 0.1 tok/s | 19.8 s |
+| Long (RAG-sized) | 3,584 | 107 s | 33.7 tok/s | 7.0 ± 0.1 tok/s | 150 s |
+
+Measured with `benchmarks/bench.py` (`--runs 3`, warm-up discarded). The three long runs
+took 104, 110 and 107 s to the first token. Other applications were closed, but about
+2 GB of swap was still in use from earlier, so treat the long-prompt number as a
+slight upper bound.
+
+\*Too few tokens to time reliably.
+
+**What it shows:** on CPU, short chats still feel quick (about half a second to the first
+word, then ~14 tok/s), but a RAG-sized prompt of ~3,600 tokens means waiting **about
+two minutes** before the first word, and writing slows to ~7 tok/s. That is roughly 3.5
+times the wait of the GTX 1650 above. If you run on CPU, keep Top K low and the context
+short. The first message after the stack starts also loads the model into memory, so
+allow extra time for it.
 
 ### Baseline vs end-to-end
 
