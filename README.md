@@ -434,33 +434,41 @@ quantization, context length, and the five numbers above.
 
 | | |
 |---|---|
-| Machine | ThinkPad T14s Gen 2a, Ubuntu 26.04 |
-| CPU | AMD Ryzen 5 PRO 5650U (6 cores, 12 threads) |
+| Machine | ThinkPad T14s Gen 2a, Ubuntu 26.04, on AC power, performance power profile |
+| CPU | AMD Ryzen 5 PRO 5650U (6 cores, 12 threads), about 2.0 GHz sustained, up to 71 °C |
 | RAM | 16 GB (about 14 GiB usable), no GPU |
 | Runtime | Ollama 0.40.13 (llama.cpp), 100% CPU, same `qwen3:4b-instruct` model |
 
 Settings: `qwen3:4b-instruct`, Q4_K_M, context 8,192, temperature 0, max 300 output tokens,
-warm model, no chat history. Only the Ollama service was running.
+warm model, no chat history. Only the Ollama service was running, other applications were
+closed, and Ollama was restarted before each session so it started with a clean memory state.
 
 | Prompt | Prompt tokens | Time to first token | Reading speed | Writing speed | Total time |
 |---|---|---|---|---|---|
-| Short | 25 | 0.57 s | n/a* | 13.7 ± 0.1 tok/s | 2.3 s |
-| Medium | 41 | 0.93 s | 46.0 tok/s | 12.7 ± 0.1 tok/s | 19.8 s |
-| Long (RAG-sized) | 3,584 | 107 s | 33.7 tok/s | 7.0 ± 0.1 tok/s | 150 s |
+| Short | 26 | 0.56 s | n/a* | 14.1 tok/s | 2.2 s |
+| Medium | 41 | 0.91 s | 47.0 tok/s | 13.0 tok/s | 19.6 s |
+| Long (RAG-sized) | 3,583 | 103 s | 34.8 tok/s | 7.0 ± 0.1 tok/s | 146 s |
 
-Measured with `benchmarks/bench.py` (`--runs 3`, warm-up discarded). The three long runs
-took 104, 110 and 107 s to the first token. Other applications were closed, but about
-2 GB of swap was still in use from earlier, so treat the long-prompt number as a
-slight upper bound.
+Measured with `benchmarks/bench.py`: two separate sessions of 3 runs each (6 runs per prompt),
+warm-up discarded. The two sessions agreed within 0.1–2.9%; all six long runs took
+103.3–103.7 s to the first token. Memory stayed steady: at least 4.9 GB free throughout, and
+swap held at about 2.1 GB (left over from before the runs) with no swap writes.
 
 \*Too few tokens to time reliably.
 
 **What it shows:** on CPU, short chats still feel quick (about half a second to the first
 word, then ~14 tok/s), but a RAG-sized prompt of ~3,600 tokens means waiting **about
-two minutes** before the first word, and writing slows to ~7 tok/s. That is roughly 3.5
-times the wait of the GTX 1650 above. If you run on CPU, keep Top K low and the context
-short. The first message after the stack starts also loads the model into memory, so
+1 minute 43 seconds** before the first word, and writing slows to ~7 tok/s. That is
+roughly 3.4 times the wait of the GTX 1650 above. If you run on CPU, keep Top K low and the
+context short. The first message after the stack starts also loads the model into memory, so
 allow extra time for it.
+
+**Memory matters on a 16 GB machine.** In an earlier, longer session of five long prompts in a
+row, the Ollama runner grew to about 8.7 GB and free memory fell below 2.5 GB; the last two
+long runs were about 7% slower (114 s to the first token instead of 106 s). Another early
+run, made while apps were open and about 4 GB of swap was in use, was slower still. For
+repeatable numbers, close other applications and restart Ollama between sessions
+(`docker compose restart ollama`).
 
 ### Baseline vs end-to-end
 
