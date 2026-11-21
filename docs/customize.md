@@ -63,6 +63,30 @@ doesn't fit may spill to CPU memory over PCIe. The DGX Spark is one example of a
 accessible to the accelerator. Multi-GPU servers offer another scaling path through
 additional accelerator memory and parallel compute.
 
+## Tracing with LiteLLM
+
+**What you get with no extra service.** The LiteLLM gateway sits in front of every model
+call, so it already records each one: model, tokens, latency, status and errors, in the
+Postgres you already run. View them in its admin page or through its API. Prompts and
+answers are not stored unless you switch that on.
+
+- **Admin page:** Logs and Usage. Port 4000 is not published by default; to reach it, add a
+  `docker-compose.override.yaml` with `services: { litellm: { ports: ["127.0.0.1:4000:4000"] } }`,
+  then open `http://127.0.0.1:4000/ui` (user `admin`, password is your `LITELLM_MASTER_KEY`).
+- **API, with no port opened:**
+  `docker compose exec litellm python -c "import urllib.request as u; r=u.Request('http://localhost:4000/spend/logs', headers={'Authorization':'Bearer '+__import__('os').environ['LITELLM_MASTER_KEY']}); print(u.urlopen(r).read().decode())"`
+- **Prompts and answers:** to record them for debugging, add
+  `store_prompts_in_spend_logs: true` under `general_settings` in `litellm/config.yaml` and
+  restart LiteLLM. Anyone with database or admin access can then read user conversations,
+  so enable it only if that is acceptable.
+
+**When to add a dedicated tracing tool.** Add one when you need to follow one request across
+several calls, read and score real conversations, compare prompt versions, or tell which
+person asked (by default every call arrives under Open WebUI's one key). It costs extra
+services and keeps conversations in a second place, so most teams running the assistant for
+others can skip it. LiteLLM can send calls to tools such as Langfuse through its callbacks if
+you do need one.
+
 ## Scope: what's deliberately not included
 
 In-House AI is the core you need to run a private assistant. Tracing uses LiteLLM's built-in
@@ -72,20 +96,9 @@ install, secure and maintain.
 
 Good places to extend it, with your tools of choice:
 
-- **Tracing:** the LiteLLM gateway already logs every call (model, tokens, latency, status,
-  errors) to the Postgres database it uses, so no extra service is needed.
-  - Query it from the host without opening any port:
-    `docker compose exec litellm python -c "import urllib.request as u; r=u.Request('http://localhost:4000/spend/logs', headers={'Authorization':'Bearer '+__import__('os').environ['LITELLM_MASTER_KEY']}); print(u.urlopen(r).read().decode())"`
-  - Or browse the LiteLLM admin UI (Logs and Usage pages). Port 4000 is not published by
-    default; to reach it, add a `docker-compose.override.yaml` with
-    `services: { litellm: { ports: ["127.0.0.1:4000:4000"] } }`, then open
-    `http://127.0.0.1:4000/ui` (user `admin`, password is your `LITELLM_MASTER_KEY`).
-  - Prompts and answers are not stored by default, which keeps conversations private. To
-    record them for debugging, add `store_prompts_in_spend_logs: true` under
-    `general_settings` in `litellm/config.yaml` and restart LiteLLM. Anyone with database
-    or admin access can then read user conversations, so enable it only if that is
-    acceptable.
-  - GPU and host metrics are a separate choice (Prometheus and Grafana).
+- **Tracing:** LiteLLM's built-in logging is on already. See
+  [Tracing with LiteLLM](#tracing-with-litellm) for what it records and when to add a
+  dedicated tool. GPU and host metrics are a separate choice (Prometheus and Grafana).
 - **Answer-quality evaluation:** `benchmarks/eval_rag.py` scores a small handbook.
   A larger or messier corpus needs its own set.
 - **PII masking:** guardrails in the gateway, for example with Presidio.

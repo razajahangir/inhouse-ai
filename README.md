@@ -38,6 +38,7 @@ Prefer to do it by hand? See the [setup guide](docs/setup.md).
 - **Local storage.** Users, chats and vectors live in your own Postgres. Weights stay on your disk.
 - **Closed doors.** No inbound ports. Remote access is by Tailscale or an identity-checked Cloudflare Tunnel, both optional.
 - **Isolated knowledge.** Every user's documents are separate from everyone else's.
+- **Plain logging.** LiteLLM records each call's model, tokens and timing in your own Postgres. Prompts and answers are not stored unless you switch that on. [Tracing with LiteLLM](docs/customize.md#tracing-with-litellm)
 
 ## Scales with you
 
