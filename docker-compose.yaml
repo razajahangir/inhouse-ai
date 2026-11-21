@@ -59,7 +59,7 @@ services:
       timeout: 5s
       retries: 10
   vllm:
-    image: vllm/vllm-openai:latest
+    image: vllm/vllm-openai:v0.34.0
     profiles: ["vllm"]
     restart: unless-stopped
     command:
@@ -162,7 +162,7 @@ services:
 
     # Private access over your tailnet: no ports opened, end-to-end encrypted.
   tailscale:
-    image: tailscale/tailscale:latest
+    image: tailscale/tailscale:v1.104.7
     profiles: ["tailscale"]
     restart: unless-stopped
     hostname: ${TS_HOSTNAME:-in-house-ai}

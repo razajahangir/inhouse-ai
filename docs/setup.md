@@ -30,7 +30,7 @@ docker compose version
 
 ### GPU access (NVIDIA only, optional)
 
-Skip this on a CPU-only machine, and remove the `deploy:` block from the `ollama` service.
+Skip this on a CPU-only machine, and delete the `deploy:` block from the `ollama` service in `docker-compose.yaml`. Compose refuses to start a service that reserves a GPU the host doesn't have.
 
 1. Install the NVIDIA driver and check it works: `nvidia-smi`.
 2. Install the [NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html),
@@ -94,7 +94,10 @@ Edit `.env`:
 - `LITELLM_MASTER_KEY`: a random value **starting with `sk-`**, e.g. `sk-<random>`.
 - `CHAT_MODEL` / `EMBED_MODEL`: e.g. `qwen3:4b-instruct` / `nomic-embed-text`. The chat model
   name must match the one in `litellm/config.yaml`.
-- `CLOUDFLARE_TUNNEL_TOKEN`: filled in during Step 4.
+- `COMPOSE_PROFILES`: which remote-access options to start. `tailscale` (private, recommended
+  for sensitive data), `cloudflare`, both, or empty for local-only access.
+- `TS_AUTHKEY`: a Tailscale auth key (only with the `tailscale` profile; see Step 4).
+- `CLOUDFLARE_TUNNEL_TOKEN`: only with the `cloudflare` profile; filled in during Step 4.
 
 Check the file is ignored by Git:
 
@@ -102,10 +105,25 @@ Check the file is ignored by Git:
 git status   # .env must NOT appear
 ```
 
-## Step 4: Create the Cloudflare Tunnel
+## Step 4: Choose how to reach it
 
-You need a domain whose DNS is managed by Cloudflare. (Prefer a fully private network?
-See [Customize](customize.md) for Tailscale.)
+Pick one or both, then list them in `COMPOSE_PROFILES` in `.env`. For local-only use, leave it
+empty and skip to Step 6.
+
+### Option A: Tailscale (private, end-to-end encrypted)
+
+Best for sensitive data: Tailscale only sees metadata, and nothing is public.
+
+1. In the Tailscale admin console, create a reusable **auth key** and put it in `TS_AUTHKEY`.
+2. Set `COMPOSE_PROFILES=tailscale`.
+3. After Step 6, open `https://in-house-ai.<your-tailnet>.ts.net` from any device on your
+   tailnet. The hostname comes from `TS_HOSTNAME`. Enable HTTPS in the admin console's DNS
+   settings if prompted.
+
+### Option B: Cloudflare Tunnel (public hostname)
+
+Set `COMPOSE_PROFILES=cloudflare` (or `tailscale,cloudflare`). Cloudflare decrypts traffic at
+its edge. You need a domain whose DNS is managed by Cloudflare.
 
 1. Cloudflare dashboard → **Zero Trust → Networks → Tunnels → Create a tunnel**.
 2. Choose **Cloudflared**, name it `in-house-ai`, and pick **Docker** as the environment.
@@ -118,7 +136,7 @@ See [Customize](customize.md) for Tailscale.)
    Use the container name, not `localhost`. Inside the tunnel container, `localhost` is the
    tunnel itself.
 
-## Step 5: Protect it with Cloudflare Access
+## Step 5: Protect it with Cloudflare Access (Option B only)
 
 Without this step, the login page is public to anyone who finds the URL.
 
@@ -145,7 +163,7 @@ Everything should show `running` (and `healthy` where a healthcheck exists), exc
 
 ## Step 7: Verify each layer
 
-**Tunnel:**
+**Tunnel (Cloudflare only):**
 
 ```bash
 docker compose logs cloudflared | grep -i "registered"

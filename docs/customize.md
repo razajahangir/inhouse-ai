@@ -4,9 +4,12 @@
 
 
 - Every service sits on the private Docker network `in-house-net` and talks by service name.
-- No port is published to the network. `cloudflared` makes an outbound connection to
-  Cloudflare, so the firewall can keep every inbound port closed.
-- Cloudflare Access checks identity before anyone even sees the login page.
+- No port is published to the network. Remote access is outbound-only, so the firewall can
+  keep every inbound port closed: either `tailscale` (joins your private tailnet) or
+  `cloudflared` (connects out to Cloudflare). Both are optional Compose profiles chosen with
+  `COMPOSE_PROFILES`.
+- With Tailscale, only devices on your tailnet can reach the stack. With Cloudflare, Cloudflare
+  Access checks identity before anyone even sees the login page.
 - Open WebUI is also bound to `127.0.0.1:3000` for local access. Remove that binding if you
   only want access through the tunnel.
 - Keep secrets only in `.env`; `.gitignore` excludes it. Verify with `git status` before
@@ -21,11 +24,11 @@ One opinionated stack that works, with clear exits:
 |---|---|---|---|
 | Model server | Ollama | vLLM (big GPUs, many users) | Replace the service; point `litellm/config.yaml` at it |
 | Chat model | `qwen3:4b-instruct` | `llama3.2:3b` (fits fully in 4 GB), `gemma3:4b`, `phi4-mini`, larger Qwen on big hardware | `CHAT_MODEL` in `.env` and `litellm/config.yaml` |
-| Remote access | Cloudflare Tunnel + Access | Tailscale (end-to-end encrypted, private network only) | Remove `cloudflared`; run `tailscale serve` on the host |
-| Hardware | NVIDIA GPU | CPU only | Remove the `deploy:` block from `ollama` |
+| Remote access | Tailscale and/or Cloudflare Tunnel + Access | Local only | Set `COMPOSE_PROFILES` in `.env` (`tailscale`, `cloudflare`, both, or empty) |
+| Hardware | NVIDIA GPU | CPU only | Delete the `deploy:` block from `ollama` in `docker-compose.yaml` |
 | Vector store | pgvector in Postgres | Qdrant, Chroma | Open WebUI's `VECTOR_DB` settings |
 
-When using Tailscale Serve, the URL is `https://in-house-ai.<your-tailnet>.ts.net`.
+With the Tailscale profile, the URL is `https://in-house-ai.<your-tailnet>.ts.net`.
 
 Trade-off to know: Cloudflare decrypts traffic at its edge; Tailscale only sees metadata.
 For confidential data, decide which you're comfortable with.

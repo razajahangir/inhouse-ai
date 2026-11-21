@@ -29,7 +29,7 @@ Then open `http://localhost:3000`. The [setup guide](docs/setup.md) walks throug
 
 - **Local inference.** The model, embeddings and document search all run on your machine.
 - **Local storage.** Users, chats and vectors live in your own Postgres. Weights stay on your disk.
-- **Closed doors.** No inbound ports. Access is by Tailscale or an identity-checked Cloudflare Tunnel.
+- **Closed doors.** No inbound ports. Remote access is by Tailscale or an identity-checked Cloudflare Tunnel, both optional.
 - **Isolated knowledge.** Every user's documents are separate from everyone else's.
 
 ## Scales with you
