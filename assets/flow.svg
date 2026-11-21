@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 360" font-family="-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',Helvetica,Arial,sans-serif">
+  <title>In-House AI: a question travels through your own hardware and never leaves it</title>
+  <style>
+    :root{--bg:#fff;--fg:#1d1d1f;--mute:#86868b;--line:#d2d2d7;--card:#f5f5f7;--acc:#0071e3;--ok:#30a14e}
+    @media (prefers-color-scheme:dark){:root{--bg:#000;--fg:#f5f5f7;--mute:#86868b;--line:#424245;--card:#1d1d1f;--acc:#2997ff;--ok:#32d74b}}
+    .bg{fill:var(--bg)} .card{fill:var(--card)} .t{fill:var(--fg);font-size:17px;font-weight:600;text-anchor:middle}
+    .s{fill:var(--mute);font-size:12.5px;text-anchor:middle} .ln{stroke:var(--line);stroke-width:1.5;fill:none}
+    .zone{fill:none;stroke:var(--line);stroke-width:1.5;stroke-dasharray:5 6}
+    .dot{fill:var(--acc)} .ret{fill:var(--ok)}
+    .cloud{animation:blink 6s ease-in-out infinite}
+    @keyframes blink{0%,100%{opacity:.25}50%{opacity:.6}}
+    .x{stroke:#ff453a;stroke-width:2.5;stroke-linecap:round;animation:pulse 6s ease-in-out infinite}
+    @keyframes pulse{0%,100%{opacity:.2}50%{opacity:1}}
+  </style>
+  <rect class="bg" width="880" height="360"/>
+  <rect class="zone" x="20" y="78" width="840" height="262" rx="28"/>
+  <text class="s" x="440" y="102" style="letter-spacing:.14em">YOUR HARDWARE</text>
+
+  <path id="a" class="ln" d="M180 200H300"/>
+  <path id="b" class="ln" d="M440 200H560"/>
+  <path id="c" class="ln" d="M700 200H760"/>
+  <path id="d" class="ln" d="M370 236V286"/>
+  <g><rect class="card" x="40" y="164" width="140" height="72" rx="18"/><text class="t" x="110" y="196">You</text><text class="s" x="110" y="217">browser</text></g>
+  <g><rect class="card" x="300" y="164" width="140" height="72" rx="18"/><text class="t" x="370" y="196">Open WebUI</text><text class="s" x="370" y="217">chat · documents</text></g>
+  <g><rect class="card" x="560" y="164" width="140" height="72" rx="18"/><text class="t" x="630" y="196">LiteLLM</text><text class="s" x="630" y="217">model gateway</text></g>
+  <g><rect class="card" x="760" y="164" width="84" height="72" rx="18"/><text class="t" x="802" y="196">Ollama</text><text class="s" x="802" y="217">model</text></g>
+  <g><rect class="card" x="300" y="286" width="140" height="44" rx="14"/><text class="t" x="370" y="314" style="font-size:14px">Postgres · pgvector</text></g>
+
+  <g class="cloud"><path d="M392 38a16 16 0 0 1 30-6 13 13 0 0 1 22 9 11 11 0 0 1-3 21h-47a12 12 0 0 1-2-24z" fill="none" stroke="var(--mute)" stroke-width="1.8" transform="translate(48 -10)"/></g>
+  <text class="s" x="512" y="56" style="text-anchor:start">External AI providers</text>
+  <line class="x" x1="459" y1="42" x2="473" y2="56"/><line class="x" x1="473" y1="42" x2="459" y2="56"/>
+
+  <circle class="dot" r="6"><animateMotion dur="6s" repeatCount="indefinite" keyPoints="0;1;1" keyTimes="0;.2;1" calcMode="linear"><mpath href="#a"/></animateMotion><animate attributeName="opacity" values="1;1;0;0" keyTimes="0;.19;.21;1" dur="6s" repeatCount="indefinite"/></circle>
+  <circle class="dot" r="6"><animateMotion dur="6s" repeatCount="indefinite" keyPoints="0;0;1;1" keyTimes="0;.2;.32;1" calcMode="linear"><mpath href="#d"/></animateMotion><animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0;.2;.21;.31;.33;1" dur="6s" repeatCount="indefinite"/></circle>
+  <circle class="dot" r="6"><animateMotion dur="6s" repeatCount="indefinite" keyPoints="0;0;1;1" keyTimes="0;.35;.5;1" calcMode="linear"><mpath href="#b"/></animateMotion><animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0;.35;.36;.49;.51;1" dur="6s" repeatCount="indefinite"/></circle>
+  <circle class="dot" r="6"><animateMotion dur="6s" repeatCount="indefinite" keyPoints="0;0;1;1" keyTimes="0;.5;.6;1" calcMode="linear"><mpath href="#c"/></animateMotion><animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0;.5;.51;.59;.61;1" dur="6s" repeatCount="indefinite"/></circle>
+  <circle class="ret" r="6"><animateMotion dur="6s" repeatCount="indefinite" keyPoints="0;0;1;1" keyTimes="0;.65;.82;1" calcMode="linear" path="M760 200H300"/><animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0;.65;.66;.81;.83;1" dur="6s" repeatCount="indefinite"/></circle>
+  <circle class="ret" r="6"><animateMotion dur="6s" repeatCount="indefinite" keyPoints="0;0;1;1" keyTimes="0;.82;.95;1" calcMode="linear" path="M300 200H180"/><animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0;.82;.83;.94;.96;1" dur="6s" repeatCount="indefinite"/></circle>
+</svg>

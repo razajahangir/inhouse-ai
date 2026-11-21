@@ -9,7 +9,7 @@ instead of opening a public issue.
 
 ## Add a benchmark result
 
-Add a row to the example results table in [README.md](./README.md). Include the machine,
+Add a row to the example results tables in [docs/benchmarks.md](./docs/benchmarks.md). Include the machine,
 GPU and VRAM, RAM, model, quantization, and context length, plus these five measurements:
 
 1. Prompt tokens read

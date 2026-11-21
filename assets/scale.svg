@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 260" font-family="-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',Helvetica,Arial,sans-serif">
+  <title>Swap the model backend without changing anything else</title>
+  <style>
+    :root{--bg:#fff;--fg:#1d1d1f;--mute:#86868b;--line:#d2d2d7;--card:#f5f5f7;--acc:#0071e3}
+    @media (prefers-color-scheme:dark){:root{--bg:#000;--fg:#f5f5f7;--mute:#86868b;--line:#424245;--card:#1d1d1f;--acc:#2997ff}}
+    .bg{fill:var(--bg)} .card{fill:var(--card)} .t{fill:var(--fg);font-size:17px;font-weight:600;text-anchor:middle}
+    .s{fill:var(--mute);font-size:12.5px;text-anchor:middle}
+    .ln{stroke:var(--line);stroke-width:1.5;fill:none}
+    .act{stroke:var(--acc);stroke-width:2.5;fill:none;stroke-dasharray:6 8;animation:flow 1.2s linear infinite}
+    @keyframes flow{to{stroke-dashoffset:-14}}
+    .on1{animation:flow 1.2s linear infinite,on1 8s infinite}.on2{animation:flow 1.2s linear infinite,on2 8s infinite}
+    @keyframes on1{0%,45%{opacity:1}50%,95%{opacity:0}100%{opacity:1}}
+    @keyframes on2{0%,45%{opacity:0}50%,95%{opacity:1}100%{opacity:0}}
+    .glow1{animation:g1 8s infinite}.glow2{animation:g2 8s infinite}
+    @keyframes g1{0%,45%{stroke:var(--acc)}50%,95%{stroke:var(--line)}100%{stroke:var(--acc)}}
+    @keyframes g2{0%,45%{stroke:var(--line)}50%,95%{stroke:var(--acc)}100%{stroke:var(--line)}}
+    .nd{stroke-width:2}
+  </style>
+  <rect class="bg" width="880" height="260"/>
+  <g><rect class="card" x="40" y="104" width="170" height="64" rx="18"/><text class="t" x="125" y="134">Open WebUI</text><text class="s" x="125" y="153">never changes</text></g>
+  <g><rect class="card" x="355" y="104" width="170" height="64" rx="18"/><text class="t" x="440" y="134">LiteLLM</text><text class="s" x="440" y="153">local-chat</text></g>
+  <g><rect class="card nd glow1" x="670" y="40" width="170" height="64" rx="18"/><text class="t" x="755" y="70">Ollama</text><text class="s" x="755" y="89">laptop · small GPU</text></g>
+  <g><rect class="card nd glow2" x="670" y="168" width="170" height="64" rx="18"/><text class="t" x="755" y="198">vLLM</text><text class="s" x="755" y="217">workstation · GPU server</text></g>
+  <path class="ln" d="M210 136H355"/><path class="act" d="M210 136H355"/>
+  <path class="ln" d="M525 136C600 136 600 72 670 72"/><path class="ln" d="M525 136C600 136 600 200 670 200"/>
+  <path class="act on1" d="M525 136C600 136 600 72 670 72"/>
+  <path class="act on2" d="M525 136C600 136 600 200 670 200"/>
+</svg>
