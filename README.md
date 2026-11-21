@@ -9,7 +9,7 @@
   <a href="docs/customize.md">Customize</a>
 </p>
 
-<p align="center"><img src="assets/flow.svg" alt="A question travels from your browser through Open WebUI, LiteLLM and Ollama, and the answer returns. External AI providers are never contacted." width="880"></p>
+<p align="center"><img src="assets/architecture.svg" alt="Browser to Tailscale, Cloudflare Tunnel or this machine only, then Open WebUI, LiteLLM, Ollama or vLLM, with Postgres alongside, all on the private Docker network in-house-net." width="880"></p>
 
 ## Your own ChatGPT-style assistant
 
@@ -24,6 +24,10 @@ docker compose up -d
 ```
 
 Then open `http://localhost:3000`. The [setup guide](docs/setup.md) walks through every step.
+
+## How a question is answered
+
+<p align="center"><img src="assets/rag.svg" alt="Ask in the browser; Open WebUI embeds the question through LiteLLM and Ollama, searches pgvector in Postgres, generates an answer from the best passages, and returns it with citations." width="880"></p>
 
 ## Private by design
 
