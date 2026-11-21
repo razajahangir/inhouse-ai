@@ -441,24 +441,26 @@ quantization, context length, and the five numbers above.
 
 Settings: `qwen3:4b-instruct`, Q4_K_M, context 8,192, temperature 0, max 300 output tokens,
 warm model, no chat history. Only the Ollama service was running, other applications were
-closed, and Ollama was restarted before each session so it started with a clean memory state.
+closed, and Ollama was started fresh for each session so it began with a clean memory state.
 
 | Prompt | Prompt tokens | Time to first token | Reading speed | Writing speed | Total time |
 |---|---|---|---|---|---|
-| Short | 26 | 0.56 s | n/a* | 14.1 tok/s | 2.2 s |
-| Medium | 41 | 0.91 s | 47.0 tok/s | 13.0 tok/s | 19.6 s |
-| Long (RAG-sized) | 3,583 | 103 s | 34.8 tok/s | 7.0 ± 0.1 tok/s | 146 s |
+| Short | 26 | 0.56 s | n/a* | 14.0 tok/s | 2.2 s |
+| Medium | 41 | 0.92 s | 46.4 tok/s | 12.9 ± 0.2 tok/s | 19.9 s |
+| Long (RAG-sized) | 3,583 | 106 s | 34.0 tok/s | 6.9 ± 0.2 tok/s | 149 s |
 
-Measured with `benchmarks/bench.py`: two separate sessions of 3 runs each (6 runs per prompt),
-warm-up discarded. The two sessions agreed within 0.1–2.9%; all six long runs took
-103.3–103.7 s to the first token. Memory stayed steady: at least 4.9 GB free throughout, and
-swap held at about 2.1 GB (left over from before the runs) with no swap writes.
+Measured with `benchmarks/bench.py`: three separate sessions of 3 runs each (9 runs per prompt),
+warm-up discarded, averaged together. Short and medium prompts agreed across sessions within
+about 3%. Long prompts took 103.3–103.7 s to the first token in two sessions and 106–120 s in
+the third (its first run was the slowest, and free memory dipped to about 3.6 GB), so expect
+roughly 103–110 s; the median is 103 s. Swap held at about 2 GB (left over from before the
+runs) with no swap writes in any session.
 
 \*Too few tokens to time reliably.
 
 **What it shows:** on CPU, short chats still feel quick (about half a second to the first
 word, then ~14 tok/s), but a RAG-sized prompt of ~3,600 tokens means waiting **about
-1 minute 43 seconds** before the first word, and writing slows to ~7 tok/s. That is
+1 minute 45 seconds** before the first word, and writing slows to ~7 tok/s. That is
 roughly 3.4 times the wait of the GTX 1650 above. If you run on CPU, keep Top K low and the
 context short. The first message after the stack starts also loads the model into memory, so
 allow extra time for it.
