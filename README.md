@@ -7,6 +7,8 @@ In-House AI is a ready-to-run, self-hosted AI stack: multi-user chat, local lang
 and question-answering over your own documents with citations. One Docker Compose file, built
 entirely on established open-source projects. No AI provider sees your prompts or your files.
 
+**Website and setup guide:** [inhouse-ai.razajahangir.dev](https://inhouse-ai.razajahangir.dev)
+
 ## Who it's for
 
 Anyone who wants the benefits of AI but can't, or won't, paste their data into a public
