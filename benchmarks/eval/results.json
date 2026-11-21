@@ -1,0 +1,329 @@
+{
+  "chat_model": "qwen3:4b-instruct",
+  "embed_model": "nomic-embed-text",
+  "top_k": 3,
+  "passages": 40,
+  "questions": 13,
+  "embed_seconds": 1.7,
+  "hit_at_3": 11,
+  "hit_at_3_of": 11,
+  "hit_at_3_rate": 1.0,
+  "mrr": 1.0,
+  "fact_recall": 1.0,
+  "answer_correct": 13,
+  "answer_correct_of": 13,
+  "answer_correct_rate": 1.0,
+  "number_faithfulness": 13,
+  "number_faithfulness_of": 13,
+  "number_faithfulness_rate": 1.0,
+  "abstention_correct": 2,
+  "abstention_total": 2,
+  "items": [
+    {
+      "id": "q1",
+      "question": "How many days of annual leave does a full-time employee get?",
+      "unanswerable": false,
+      "gold": "leave:1",
+      "retrieved": [
+        "leave:1",
+        "sick:1",
+        "sick:0"
+      ],
+      "hit_at_3": true,
+      "rank": 1,
+      "facts": [
+        "18 days"
+      ],
+      "facts_found": [
+        true
+      ],
+      "numbers_supported": true,
+      "abstained": false,
+      "answer_correct": true,
+      "generation_s": 16.39,
+      "answer": "A full-time employee gets 18 days of annual leave."
+    },
+    {
+      "id": "q2",
+      "question": "How many days of annual leave can be carried into the next company year?",
+      "unanswerable": false,
+      "gold": "leave:2",
+      "retrieved": [
+        "leave:2",
+        "leave:1",
+        "sick:1"
+      ],
+      "hit_at_3": true,
+      "rank": 1,
+      "facts": [
+        "5 days"
+      ],
+      "facts_found": [
+        true
+      ],
+      "numbers_supported": true,
+      "abstained": false,
+      "answer_correct": true,
+      "generation_s": 6.41,
+      "answer": "At most 5 days of annual leave can be carried into the next company year."
+    },
+    {
+      "id": "q3",
+      "question": "How much notice is required for an annual leave request?",
+      "unanswerable": false,
+      "gold": "leave:3",
+      "retrieved": [
+        "leave:3",
+        "leave:1",
+        "parental:2"
+      ],
+      "hit_at_3": true,
+      "rank": 1,
+      "facts": [
+        "10 business days"
+      ],
+      "facts_found": [
+        true
+      ],
+      "numbers_supported": true,
+      "abstained": false,
+      "answer_correct": true,
+      "generation_s": 5.2,
+      "answer": "Ten business days of notice is required for an annual leave request."
+    },
+    {
+      "id": "q4",
+      "question": "After how many consecutive sick days is a medical note required?",
+      "unanswerable": false,
+      "gold": "sick:2",
+      "retrieved": [
+        "sick:2",
+        "sick:0",
+        "sick:1"
+      ],
+      "hit_at_3": true,
+      "rank": 1,
+      "facts": [
+        "2 consecutive"
+      ],
+      "facts_found": [
+        true
+      ],
+      "numbers_supported": true,
+      "abstained": false,
+      "answer_correct": true,
+      "generation_s": 5.26,
+      "answer": "A medical note is required after 2 consecutive sick days."
+    },
+    {
+      "id": "q5",
+      "question": "How many weeks of paid parental leave does the primary caregiver get?",
+      "unanswerable": false,
+      "gold": "parental:1",
+      "retrieved": [
+        "parental:1",
+        "leave:1",
+        "parental:3"
+      ],
+      "hit_at_3": true,
+      "rank": 1,
+      "facts": [
+        "16 weeks"
+      ],
+      "facts_found": [
+        true
+      ],
+      "numbers_supported": true,
+      "abstained": false,
+      "answer_correct": true,
+      "generation_s": 4.86,
+      "answer": "The primary caregiver gets 16 weeks of paid parental leave."
+    },
+    {
+      "id": "q6",
+      "question": "What is the reimbursement cap for a meal on a normal working day?",
+      "unanswerable": false,
+      "gold": "expenses:1",
+      "retrieved": [
+        "expenses:1",
+        "travel:2",
+        "expenses:0"
+      ],
+      "hit_at_3": true,
+      "rank": 1,
+      "facts": [
+        "42 dollars"
+      ],
+      "facts_found": [
+        true
+      ],
+      "numbers_supported": true,
+      "abstained": false,
+      "answer_correct": true,
+      "generation_s": 4.5,
+      "answer": "The reimbursement cap for a meal on a normal working day is 42 dollars."
+    },
+    {
+      "id": "q7",
+      "question": "How many days does someone have to file an everyday expense report?",
+      "unanswerable": false,
+      "gold": "expenses:3",
+      "retrieved": [
+        "expenses:3",
+        "expenses:2",
+        "expenses:0"
+      ],
+      "hit_at_3": true,
+      "rank": 1,
+      "facts": [
+        "14 days"
+      ],
+      "facts_found": [
+        true
+      ],
+      "numbers_supported": true,
+      "abstained": false,
+      "answer_correct": true,
+      "generation_s": 3.96,
+      "answer": "Someone has 14 days to file an everyday expense report."
+    },
+    {
+      "id": "q8",
+      "question": "What is the per-person cap for client entertainment?",
+      "unanswerable": false,
+      "gold": "travel:1",
+      "retrieved": [
+        "travel:1",
+        "travel:2",
+        "travel:4"
+      ],
+      "hit_at_3": true,
+      "rank": 1,
+      "facts": [
+        "75 dollars"
+      ],
+      "facts_found": [
+        true
+      ],
+      "numbers_supported": true,
+      "abstained": false,
+      "answer_correct": true,
+      "generation_s": 4.62,
+      "answer": "The per-person cap for client entertainment is 75 dollars."
+    },
+    {
+      "id": "q9",
+      "question": "How long must a work password be?",
+      "unanswerable": false,
+      "gold": "security:1",
+      "retrieved": [
+        "security:1",
+        "parental:2",
+        "security:0"
+      ],
+      "hit_at_3": true,
+      "rank": 1,
+      "facts": [
+        "14 characters"
+      ],
+      "facts_found": [
+        true
+      ],
+      "numbers_supported": true,
+      "abstained": false,
+      "answer_correct": true,
+      "generation_s": 3.94,
+      "answer": "A work password must be at least 14 characters long."
+    },
+    {
+      "id": "q10",
+      "question": "How long are client contracts and invoices kept after an engagement ends?",
+      "unanswerable": false,
+      "gold": "retention:1",
+      "retrieved": [
+        "retention:1",
+        "retention:4",
+        "retention:2"
+      ],
+      "hit_at_3": true,
+      "rank": 1,
+      "facts": [
+        "7 years"
+      ],
+      "facts_found": [
+        true
+      ],
+      "numbers_supported": true,
+      "abstained": false,
+      "answer_correct": true,
+      "generation_s": 4.1,
+      "answer": "Client contracts and invoices are kept for 7 years after the engagement ends."
+    },
+    {
+      "id": "q11",
+      "question": "How quickly must the on-call person answer a page?",
+      "unanswerable": false,
+      "gold": "oncall:2",
+      "retrieved": [
+        "oncall:2",
+        "security:4",
+        "sick:3"
+      ],
+      "hit_at_3": true,
+      "rank": 1,
+      "facts": [
+        "15 minutes"
+      ],
+      "facts_found": [
+        true
+      ],
+      "numbers_supported": true,
+      "abstained": false,
+      "answer_correct": true,
+      "generation_s": 4.48,
+      "answer": "The on-call person must answer a page within 15 minutes."
+    },
+    {
+      "id": "q12",
+      "question": "What is the annual bonus percentage?",
+      "unanswerable": true,
+      "gold": null,
+      "retrieved": [
+        "leave:1",
+        "expenses:2",
+        "expenses:1"
+      ],
+      "hit_at_3": false,
+      "rank": null,
+      "facts": [],
+      "facts_found": [],
+      "numbers_supported": true,
+      "abstained": true,
+      "answer_correct": true,
+      "generation_s": 2.79,
+      "answer": "The documents do not say."
+    },
+    {
+      "id": "q13",
+      "question": "May staff work from another country for three months?",
+      "unanswerable": true,
+      "gold": null,
+      "retrieved": [
+        "leave:1",
+        "sick:1",
+        "leave:2"
+      ],
+      "hit_at_3": false,
+      "rank": null,
+      "facts": [],
+      "facts_found": [],
+      "numbers_supported": true,
+      "abstained": true,
+      "answer_correct": true,
+      "generation_s": 3.03,
+      "answer": "The documents do not say."
+    }
+  ],
+  "machine": "Lenovo ThinkPad T14s (20XGS0NP0G), AMD Ryzen 5 PRO 5650U, 14 GB RAM, Ubuntu 26.04, CPU only",
+  "scoring_note": "Fact match folds number words onto digits, so q3 ('Ten business days') counts as '10 business days'. The model was not asked again."
+}

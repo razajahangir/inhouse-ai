@@ -1,0 +1,353 @@
+{
+  "chat_model": "qwen3:4b-instruct",
+  "embed_model": "nomic-embed-text",
+  "top_k": 3,
+  "passages": 16,
+  "questions": 14,
+  "embed_seconds": 1.3,
+  "corpus": "corpus_hard.json",
+  "hit_at_1": 9,
+  "hit_at_3": 12,
+  "hit_at_3_of": 12,
+  "hit_at_3_rate": 1.0,
+  "mrr": 0.861,
+  "fact_recall": 0.75,
+  "answer_correct": 11,
+  "answer_correct_of": 14,
+  "answer_correct_rate": 0.786,
+  "number_faithfulness": 14,
+  "number_faithfulness_of": 14,
+  "number_faithfulness_rate": 1.0,
+  "abstention_correct": 2,
+  "abstention_total": 2,
+  "items": [
+    {
+      "id": "h1",
+      "question": "If a person works the standard week rather than reduced hours, how much vacation do they get over a company year?",
+      "unanswerable": false,
+      "gold": "holiday:0",
+      "retrieved": [
+        "illness-trap:0",
+        "holiday:0",
+        "hosting-trap:0"
+      ],
+      "hit_at_3": true,
+      "rank": 2,
+      "facts": [
+        "18 days"
+      ],
+      "facts_found": [
+        false
+      ],
+      "numbers_supported": true,
+      "abstained": true,
+      "answer_correct": false,
+      "generation_s": 16.26,
+      "answer": "The passages do not say how much vacation a person gets over a company year if they work the standard week."
+    },
+    {
+      "id": "h2",
+      "question": "How many leftover vacation days can move into the following year?",
+      "unanswerable": false,
+      "gold": "holiday:0",
+      "retrieved": [
+        "holiday:0",
+        "illness-trap:0",
+        "carer:0"
+      ],
+      "hit_at_3": true,
+      "rank": 1,
+      "facts": [
+        "5 days"
+      ],
+      "facts_found": [
+        true
+      ],
+      "numbers_supported": true,
+      "abstained": false,
+      "answer_correct": true,
+      "generation_s": 6.81,
+      "answer": "Up to 5 days of holiday allowance can be rolled forward into the following year."
+    },
+    {
+      "id": "h3",
+      "question": "How far ahead should someone ask before taking vacation?",
+      "unanswerable": false,
+      "gold": "holiday-notice:0",
+      "retrieved": [
+        "notice-trap:0",
+        "holiday-notice:0",
+        "carer:0"
+      ],
+      "hit_at_3": true,
+      "rank": 2,
+      "facts": [
+        "10 business days"
+      ],
+      "facts_found": [
+        true
+      ],
+      "numbers_supported": true,
+      "abstained": false,
+      "answer_correct": true,
+      "generation_s": 10.19,
+      "answer": "Someone should ask 10 business days ahead before taking vacation. The other parent can take 4 weeks, but the rule of 10 business days applies to the request to be away."
+    },
+    {
+      "id": "h4",
+      "question": "When an employee is off ill, at what point must they provide something from a physician?",
+      "unanswerable": false,
+      "gold": "illness-trap:0",
+      "retrieved": [
+        "illness-trap:0",
+        "notice-trap:0",
+        "holiday-notice:0"
+      ],
+      "hit_at_3": true,
+      "rank": 1,
+      "facts": [
+        "2 days"
+      ],
+      "facts_found": [
+        true
+      ],
+      "numbers_supported": true,
+      "abstained": false,
+      "answer_correct": true,
+      "generation_s": 6.2,
+      "answer": "When an employee is off ill, they must provide a physician's note once the absence has already lasted 2 days in a row."
+    },
+    {
+      "id": "h5",
+      "question": "How long can the parent who stays home with a new child remain away while still being paid?",
+      "unanswerable": false,
+      "gold": "carer:0",
+      "retrieved": [
+        "carer:0",
+        "carer-trap:0",
+        "holiday-notice:0"
+      ],
+      "hit_at_3": true,
+      "rank": 1,
+      "facts": [
+        "16 weeks"
+      ],
+      "facts_found": [
+        false
+      ],
+      "numbers_supported": true,
+      "abstained": true,
+      "answer_correct": false,
+      "generation_s": 6.91,
+      "answer": "The passages do not say how long the parent who stays home with a new child can remain away while still being paid."
+    },
+    {
+      "id": "h6",
+      "question": "What's the most the company will pay back for food on a regular day in the office?",
+      "unanswerable": false,
+      "gold": "meals:0",
+      "retrieved": [
+        "meals:0",
+        "meals-trap:0",
+        "holiday:0"
+      ],
+      "hit_at_3": true,
+      "rank": 1,
+      "facts": [
+        "42 dollars"
+      ],
+      "facts_found": [
+        true
+      ],
+      "numbers_supported": true,
+      "abstained": false,
+      "answer_correct": true,
+      "generation_s": 6.97,
+      "answer": "The most the company will pay back for food on a regular day in the office is 42 dollars."
+    },
+    {
+      "id": "h7",
+      "question": "How soon after buying something on a normal working day does the claim have to arrive?",
+      "unanswerable": false,
+      "gold": "meals:0",
+      "retrieved": [
+        "meals:0",
+        "holiday:0",
+        "pager-trap:0"
+      ],
+      "hit_at_3": true,
+      "rank": 1,
+      "facts": [
+        "14 days"
+      ],
+      "facts_found": [
+        true
+      ],
+      "numbers_supported": true,
+      "abstained": false,
+      "answer_correct": true,
+      "generation_s": 4.46,
+      "answer": "The claim has to reach payroll within 14 days of the purchase."
+    },
+    {
+      "id": "h8",
+      "question": "When staff host customers, what is the maximum that can be claimed for each guest?",
+      "unanswerable": false,
+      "gold": "meals-trap:0",
+      "retrieved": [
+        "meals-trap:0",
+        "hosting-trap:0",
+        "holiday:0"
+      ],
+      "hit_at_3": true,
+      "rank": 1,
+      "facts": [
+        "75 dollars"
+      ],
+      "facts_found": [
+        true
+      ],
+      "numbers_supported": true,
+      "abstained": false,
+      "answer_correct": true,
+      "generation_s": 6.51,
+      "answer": "The maximum that can be claimed for each guest when staff host customers is 75 dollars."
+    },
+    {
+      "id": "h9",
+      "question": "How long does a work login passphrase have to be, at the shortest?",
+      "unanswerable": false,
+      "gold": "signin:0",
+      "retrieved": [
+        "signin:0",
+        "signin-trap:0",
+        "pager-trap:0"
+      ],
+      "hit_at_3": true,
+      "rank": 1,
+      "facts": [
+        "14 characters"
+      ],
+      "facts_found": [
+        true
+      ],
+      "numbers_supported": true,
+      "abstained": false,
+      "answer_correct": true,
+      "generation_s": 5.73,
+      "answer": "A work login passphrase has to be at least 14 characters long."
+    },
+    {
+      "id": "h10",
+      "question": "After a project finishes, how long are the agreement and the bills kept?",
+      "unanswerable": false,
+      "gold": "files:0",
+      "retrieved": [
+        "files:0",
+        "files-trap:0",
+        "holiday:0"
+      ],
+      "hit_at_3": true,
+      "rank": 1,
+      "facts": [
+        "7 years"
+      ],
+      "facts_found": [
+        true
+      ],
+      "numbers_supported": true,
+      "abstained": false,
+      "answer_correct": true,
+      "generation_s": 6.29,
+      "answer": "After a project finishes, the agreement and the bills are kept for 7 years."
+    },
+    {
+      "id": "h11",
+      "question": "When something breaks in production, what's the longest the assigned person may wait before responding?",
+      "unanswerable": false,
+      "gold": "pager:0",
+      "retrieved": [
+        "pager-trap:0",
+        "holiday-notice:0",
+        "pager:0"
+      ],
+      "hit_at_3": true,
+      "rank": 3,
+      "facts": [
+        "15 minutes"
+      ],
+      "facts_found": [
+        false
+      ],
+      "numbers_supported": true,
+      "abstained": false,
+      "answer_correct": false,
+      "generation_s": 7.35,
+      "answer": "The assigned person must respond within 48 hours of being notified, so the longest they may wait before responding is 48 hours."
+    },
+    {
+      "id": "h12",
+      "question": "If a customer demands their files be erased, how long does that take?",
+      "unanswerable": false,
+      "gold": "files:0",
+      "retrieved": [
+        "files:0",
+        "signin-trap:0",
+        "signin:0"
+      ],
+      "hit_at_3": true,
+      "rank": 1,
+      "facts": [
+        "30 days"
+      ],
+      "facts_found": [
+        true
+      ],
+      "numbers_supported": true,
+      "abstained": false,
+      "answer_correct": true,
+      "generation_s": 5.68,
+      "answer": "If a customer demands their files be erased, it takes 30 days unless the 7-year hold still applies."
+    },
+    {
+      "id": "h13",
+      "question": "Is there a yearly cash award on top of salary, and what share of pay is it?",
+      "unanswerable": true,
+      "gold": null,
+      "retrieved": [
+        "meals-trap:0",
+        "holiday:0",
+        "meals:0"
+      ],
+      "hit_at_3": false,
+      "rank": null,
+      "facts": [],
+      "facts_found": [],
+      "numbers_supported": true,
+      "abstained": true,
+      "answer_correct": true,
+      "generation_s": 4.01,
+      "answer": "The documents do not say."
+    },
+    {
+      "id": "h14",
+      "question": "Can someone live abroad for a quarter and keep working?",
+      "unanswerable": true,
+      "gold": null,
+      "retrieved": [
+        "holiday:0",
+        "carer-trap:0",
+        "carer:0"
+      ],
+      "hit_at_3": false,
+      "rank": null,
+      "facts": [],
+      "facts_found": [],
+      "numbers_supported": true,
+      "abstained": true,
+      "answer_correct": true,
+      "generation_s": 3.52,
+      "answer": "The documents do not say."
+    }
+  ]
+}

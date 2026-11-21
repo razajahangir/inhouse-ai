@@ -1,0 +1,199 @@
+{
+  "notes": "Fictional staff handbook. Facts are invented so the chat model cannot answer from pretraining. Each question names the single passage that contains the answer.",
+  "documents": [
+    {
+      "id": "leave",
+      "title": "Annual leave",
+      "paragraphs": [
+        "The company year for holidays runs from 1 March to 28 February. Unused plans should be discussed in the February team meeting.",
+        "Full-time staff receive 18 days of annual leave, plus public holidays. Part-time staff receive a pro-rata share of those 18 days.",
+        "At most 5 days may be carried into the next company year, and carried days must be used before 31 May.",
+        "Leave requests need 10 business days of notice. The manager confirms or declines in writing within 3 business days.",
+        "Leave already approved can be cancelled by the company only when a client deadline was agreed in the statement of work."
+      ]
+    },
+    {
+      "id": "sick",
+      "title": "Sick leave",
+      "paragraphs": [
+        "Sick leave is separate from annual leave and does not reduce the 18-day holiday balance.",
+        "Full-time staff may take 10 days of paid sick leave in a company year. Unused sick days expire on 28 February and are not paid out.",
+        "A medical note is required after 2 consecutive sick days, and it should be sent to the manager before the third day.",
+        "Same-day sick notice goes to the manager by 09:30 local time. A colleague covering a client call should be named in that message.",
+        "Elective appointments should be booked outside core hours where the clinic allows it."
+      ]
+    },
+    {
+      "id": "parental",
+      "title": "Parental leave",
+      "paragraphs": [
+        "Parental leave applies to birth, adoption, and long-term foster placement.",
+        "The primary caregiver may take 16 weeks of paid parental leave. The secondary caregiver may take 4 weeks.",
+        "Notice of 8 weeks is required before the planned start date, sent to both the manager and payroll.",
+        "During paid parental leave the company continues pension contributions at the same rate as the prior month.",
+        "A return-to-work conversation is booked in the week before the caregiver comes back."
+      ]
+    },
+    {
+      "id": "expenses",
+      "title": "Everyday expenses",
+      "paragraphs": [
+        "Everyday expenses cover meals and supplies bought while working a normal office day, not client trips.",
+        "A meal on a working day is reimbursed up to 42 dollars. Anything above that is paid by the employee.",
+        "A receipt is required for any everyday expense over 25 dollars. Smaller amounts need a card statement line.",
+        "Expense reports are due within 14 days of the purchase. Payroll rejects reports filed after that.",
+        "Office supplies over 100 dollars need a written note from the office manager before purchase."
+      ]
+    },
+    {
+      "id": "travel",
+      "title": "Client travel",
+      "paragraphs": [
+        "Client travel means a trip booked to visit a client site outside the home city.",
+        "Client entertainment is reimbursed up to 75 dollars per person, and the client names must be listed.",
+        "Alcohol on a client meal is reimbursed up to 20 dollars per person. Amounts above that are personal.",
+        "Travel bookings need written approval from the engagement lead before the ticket is bought.",
+        "Hotel nights are capped at 180 dollars before tax. Breakfast included in the rate does not count as a separate meal."
+      ]
+    },
+    {
+      "id": "security",
+      "title": "Account security",
+      "paragraphs": [
+        "Work accounts are issued by IT on the first morning. Personal email is not a login for client systems.",
+        "Passwords must be at least 14 characters and are changed every 180 days.",
+        "Multi-factor authentication is required on email, the VPN, and the client file store.",
+        "Laptops must use full-disk encryption, BitLocker on Windows and LUKS on Linux, before the first client file is copied.",
+        "A lost laptop is reported to IT within 1 hour. IT revokes sessions the same day."
+      ]
+    },
+    {
+      "id": "retention",
+      "title": "Client file retention",
+      "paragraphs": [
+        "Client files include contracts, invoices, and working papers stored in the project folder.",
+        "Client contracts and invoices are kept for 7 years after the engagement ends.",
+        "A client's written deletion request is completed within 30 days, except where the 7-year rule still applies.",
+        "Staff must not send client files to a personal email address or a personal cloud drive.",
+        "Working drafts that were never sent to the client may be deleted when the engagement closes."
+      ]
+    },
+    {
+      "id": "oncall",
+      "title": "On-call rotation",
+      "paragraphs": [
+        "The on-call rotation covers production incidents for hosted client work.",
+        "The weekly on-call stipend is 180 dollars, paid with the next salary run.",
+        "The person on call answers a page within 15 minutes, at any hour during the assigned week.",
+        "The rotation starts each Monday at 09:00 local time and ends the following Monday at 09:00.",
+        "Swap requests are sent to the engineering lead at least 48 hours before the week begins."
+      ]
+    }
+  ],
+  "questions": [
+    {
+      "id": "q1",
+      "question": "How many days of annual leave does a full-time employee get?",
+      "gold_doc": "leave",
+      "gold_paragraph": 1,
+      "facts": ["18 days"],
+      "unanswerable": false
+    },
+    {
+      "id": "q2",
+      "question": "How many days of annual leave can be carried into the next company year?",
+      "gold_doc": "leave",
+      "gold_paragraph": 2,
+      "facts": ["5 days"],
+      "unanswerable": false
+    },
+    {
+      "id": "q3",
+      "question": "How much notice is required for an annual leave request?",
+      "gold_doc": "leave",
+      "gold_paragraph": 3,
+      "facts": ["10 business days"],
+      "unanswerable": false
+    },
+    {
+      "id": "q4",
+      "question": "After how many consecutive sick days is a medical note required?",
+      "gold_doc": "sick",
+      "gold_paragraph": 2,
+      "facts": ["2 consecutive"],
+      "unanswerable": false
+    },
+    {
+      "id": "q5",
+      "question": "How many weeks of paid parental leave does the primary caregiver get?",
+      "gold_doc": "parental",
+      "gold_paragraph": 1,
+      "facts": ["16 weeks"],
+      "unanswerable": false
+    },
+    {
+      "id": "q6",
+      "question": "What is the reimbursement cap for a meal on a normal working day?",
+      "gold_doc": "expenses",
+      "gold_paragraph": 1,
+      "facts": ["42 dollars"],
+      "unanswerable": false
+    },
+    {
+      "id": "q7",
+      "question": "How many days does someone have to file an everyday expense report?",
+      "gold_doc": "expenses",
+      "gold_paragraph": 3,
+      "facts": ["14 days"],
+      "unanswerable": false
+    },
+    {
+      "id": "q8",
+      "question": "What is the per-person cap for client entertainment?",
+      "gold_doc": "travel",
+      "gold_paragraph": 1,
+      "facts": ["75 dollars"],
+      "unanswerable": false
+    },
+    {
+      "id": "q9",
+      "question": "How long must a work password be?",
+      "gold_doc": "security",
+      "gold_paragraph": 1,
+      "facts": ["14 characters"],
+      "unanswerable": false
+    },
+    {
+      "id": "q10",
+      "question": "How long are client contracts and invoices kept after an engagement ends?",
+      "gold_doc": "retention",
+      "gold_paragraph": 1,
+      "facts": ["7 years"],
+      "unanswerable": false
+    },
+    {
+      "id": "q11",
+      "question": "How quickly must the on-call person answer a page?",
+      "gold_doc": "oncall",
+      "gold_paragraph": 2,
+      "facts": ["15 minutes"],
+      "unanswerable": false
+    },
+    {
+      "id": "q12",
+      "question": "What is the annual bonus percentage?",
+      "gold_doc": null,
+      "gold_paragraph": null,
+      "facts": [],
+      "unanswerable": true
+    },
+    {
+      "id": "q13",
+      "question": "May staff work from another country for three months?",
+      "gold_doc": null,
+      "gold_paragraph": null,
+      "facts": [],
+      "unanswerable": true
+    }
+  ]
+}

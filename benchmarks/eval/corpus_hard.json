@@ -1,0 +1,231 @@
+{
+  "notes": "Same fictional handbook, harder cut. Each passage states two facts, and several passages reuse the question's words with the wrong number. Questions are paraphrased so they do not copy the sentence that contains the answer.",
+  "documents": [
+    {
+      "id": "holiday",
+      "title": "Holiday allowance",
+      "paragraphs": [
+        "A full-time contract includes a holiday allowance of 18 days across the company year. Up to 5 days may be rolled forward, and those rolled days have to be used before 31 May."
+      ]
+    },
+    {
+      "id": "illness-trap",
+      "title": "Illness balance",
+      "paragraphs": [
+        "Someone who works the standard week rather than reduced hours gets 10 days when they are ill, and that balance is not their vacation. A physician's note is required once that absence has already lasted 2 days in a row."
+      ]
+    },
+    {
+      "id": "holiday-notice",
+      "title": "Asking for time away",
+      "paragraphs": [
+        "A request to be away has to be sent 10 business days beforehand. The manager answers in writing within 3 business days, and time already granted is withdrawn only when a client deadline sits in the statement of work."
+      ]
+    },
+    {
+      "id": "notice-trap",
+      "title": "Same-day illness",
+      "paragraphs": [
+        "How far ahead someone should ask is a different rule from calling in sick. On a sick morning the manager needs a message by 09:30, and the message names the colleague who will cover any customer call."
+      ]
+    },
+    {
+      "id": "carer",
+      "title": "New child",
+      "paragraphs": [
+        "The parent who is the main carer can remain away for 16 weeks and still be paid. Word has to reach the manager and payroll 8 weeks before that stretch begins. The other parent can take 4 weeks."
+      ]
+    },
+    {
+      "id": "carer-trap",
+      "title": "Return",
+      "paragraphs": [
+        "The parent who stays home with a new child has a conversation about coming back, booked in the week before they return. Pension contributions continue at the prior month's rate during the paid stretch."
+      ]
+    },
+    {
+      "id": "meals",
+      "title": "Ordinary meals",
+      "paragraphs": [
+        "Food bought on an ordinary day in the office is paid back up to 42 dollars. The claim for that spend has to reach payroll within 14 days of the purchase, and a receipt is required once the amount is over 25 dollars."
+      ]
+    },
+    {
+      "id": "meals-trap",
+      "title": "Customer hosting",
+      "paragraphs": [
+        "The most the company will pay back for food changes when staff host customers. Hosting is covered up to 75 dollars for each guest, drinks on that bill only up to 20 dollars for each guest, and the guests' names go on the claim."
+      ]
+    },
+    {
+      "id": "hosting-trap",
+      "title": "Travel bookings",
+      "paragraphs": [
+        "A regular day in the office is not a client trip. A hotel night on a trip is capped at 165 dollars before tax, and the engagement lead approves the booking in writing before the ticket is bought."
+      ]
+    },
+    {
+      "id": "signin",
+      "title": "Signing in",
+      "paragraphs": [
+        "The secret used to sign in to work systems has to be at least 14 characters, and it is replaced every 180 days. The laptop is encrypted with BitLocker or LUKS before the first client file is copied onto it."
+      ]
+    },
+    {
+      "id": "signin-trap",
+      "title": "Lost machine",
+      "paragraphs": [
+        "Minimum length is not the same rule as a missing computer. A lost laptop is reported within 1 hour, and multi-factor authentication is required on email, the VPN, and the file store."
+      ]
+    },
+    {
+      "id": "files",
+      "title": "Keeping client papers",
+      "paragraphs": [
+        "After a project finishes, the agreement and the bills are kept for 7 years. A written demand to erase those files is finished within 30 days, unless the 7-year hold still applies. Working drafts that were never sent may be removed when the project closes."
+      ]
+    },
+    {
+      "id": "files-trap",
+      "title": "Where files may go",
+      "paragraphs": [
+        "After a project finishes, staff still must not send the agreement or the bills to a personal inbox or a personal cloud drive. Personal email is never a login for client systems."
+      ]
+    },
+    {
+      "id": "pager",
+      "title": "Production incidents",
+      "paragraphs": [
+        "Whoever is holding the incident phone answers within 15 minutes, at any hour that week. The extra pay for the week is 180 dollars, and the week begins Monday at 09:00."
+      ]
+    },
+    {
+      "id": "pager-trap",
+      "title": "Swapping the week",
+      "paragraphs": [
+        "When something breaks in production, the assigned person can trade weeks if the engineering lead hears at least 48 hours before the week begins. That notice is not how quickly they must respond."
+      ]
+    },
+    {
+      "id": "supplies",
+      "title": "Office supplies",
+      "paragraphs": [
+        "Supplies for the office above 100 dollars need a written note from the office manager before anyone buys them. Smaller card purchases under the receipt line still need the statement entry."
+      ]
+    }
+  ],
+  "questions": [
+    {
+      "id": "h1",
+      "question": "If a person works the standard week rather than reduced hours, how much vacation do they get over a company year?",
+      "gold_doc": "holiday",
+      "gold_paragraph": 0,
+      "facts": ["18 days"],
+      "unanswerable": false
+    },
+    {
+      "id": "h2",
+      "question": "How many leftover vacation days can move into the following year?",
+      "gold_doc": "holiday",
+      "gold_paragraph": 0,
+      "facts": ["5 days"],
+      "unanswerable": false
+    },
+    {
+      "id": "h3",
+      "question": "How far ahead should someone ask before taking vacation?",
+      "gold_doc": "holiday-notice",
+      "gold_paragraph": 0,
+      "facts": ["10 business days"],
+      "unanswerable": false
+    },
+    {
+      "id": "h4",
+      "question": "When an employee is off ill, at what point must they provide something from a physician?",
+      "gold_doc": "illness-trap",
+      "gold_paragraph": 0,
+      "facts": ["2 days"],
+      "unanswerable": false
+    },
+    {
+      "id": "h5",
+      "question": "How long can the parent who stays home with a new child remain away while still being paid?",
+      "gold_doc": "carer",
+      "gold_paragraph": 0,
+      "facts": ["16 weeks"],
+      "unanswerable": false
+    },
+    {
+      "id": "h6",
+      "question": "What's the most the company will pay back for food on a regular day in the office?",
+      "gold_doc": "meals",
+      "gold_paragraph": 0,
+      "facts": ["42 dollars"],
+      "unanswerable": false
+    },
+    {
+      "id": "h7",
+      "question": "How soon after buying something on a normal working day does the claim have to arrive?",
+      "gold_doc": "meals",
+      "gold_paragraph": 0,
+      "facts": ["14 days"],
+      "unanswerable": false
+    },
+    {
+      "id": "h8",
+      "question": "When staff host customers, what is the maximum that can be claimed for each guest?",
+      "gold_doc": "meals-trap",
+      "gold_paragraph": 0,
+      "facts": ["75 dollars"],
+      "unanswerable": false
+    },
+    {
+      "id": "h9",
+      "question": "How long does a work login passphrase have to be, at the shortest?",
+      "gold_doc": "signin",
+      "gold_paragraph": 0,
+      "facts": ["14 characters"],
+      "unanswerable": false
+    },
+    {
+      "id": "h10",
+      "question": "After a project finishes, how long are the agreement and the bills kept?",
+      "gold_doc": "files",
+      "gold_paragraph": 0,
+      "facts": ["7 years"],
+      "unanswerable": false
+    },
+    {
+      "id": "h11",
+      "question": "When something breaks in production, what's the longest the assigned person may wait before responding?",
+      "gold_doc": "pager",
+      "gold_paragraph": 0,
+      "facts": ["15 minutes"],
+      "unanswerable": false
+    },
+    {
+      "id": "h12",
+      "question": "If a customer demands their files be erased, how long does that take?",
+      "gold_doc": "files",
+      "gold_paragraph": 0,
+      "facts": ["30 days"],
+      "unanswerable": false
+    },
+    {
+      "id": "h13",
+      "question": "Is there a yearly cash award on top of salary, and what share of pay is it?",
+      "gold_doc": null,
+      "gold_paragraph": null,
+      "facts": [],
+      "unanswerable": true
+    },
+    {
+      "id": "h14",
+      "question": "Can someone live abroad for a quarter and keep working?",
+      "gold_doc": null,
+      "gold_paragraph": null,
+      "facts": [],
+      "unanswerable": true
+    }
+  ]
+}

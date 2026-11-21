@@ -65,16 +65,29 @@ additional accelerator memory and parallel compute.
 
 ## Scope: what's deliberately not included
 
-In-House AI is the core you need to run a private assistant, and nothing more. Observability,
-evaluation and data-protection layers are left out on purpose: teams that self-host usually
-have their own preferences, and every extra layer is more to install, secure and maintain.
+In-House AI is the core you need to run a private assistant. Tracing uses LiteLLM's built-in
+logging, and a small answer check is an optional add-on. Personal-data masking is left out:
+teams that self-host usually have their own preference, and every extra layer is more to
+install, secure and maintain.
 
 Good places to extend it, with your tools of choice:
 
-- **Tracing and monitoring:** LiteLLM supports callbacks to tools such as Langfuse; the
-  model server and GPU can be monitored with Prometheus and Grafana.
-- **Answer-quality evaluation:** a test set of questions scored with a framework such as
-  Ragas or DeepEval.
+- **Tracing:** the LiteLLM gateway already logs every call (model, tokens, latency, status,
+  errors) to the Postgres database it uses, so no extra service is needed.
+  - Query it from the host without opening any port:
+    `docker compose exec litellm python -c "import urllib.request as u; r=u.Request('http://localhost:4000/spend/logs', headers={'Authorization':'Bearer '+__import__('os').environ['LITELLM_MASTER_KEY']}); print(u.urlopen(r).read().decode())"`
+  - Or browse the LiteLLM admin UI (Logs and Usage pages). Port 4000 is not published by
+    default; to reach it, add a `docker-compose.override.yaml` with
+    `services: { litellm: { ports: ["127.0.0.1:4000:4000"] } }`, then open
+    `http://127.0.0.1:4000/ui` (user `admin`, password is your `LITELLM_MASTER_KEY`).
+  - Prompts and answers are not stored by default, which keeps conversations private. To
+    record them for debugging, add `store_prompts_in_spend_logs: true` under
+    `general_settings` in `litellm/config.yaml` and restart LiteLLM. Anyone with database
+    or admin access can then read user conversations, so enable it only if that is
+    acceptable.
+  - GPU and host metrics are a separate choice (Prometheus and Grafana).
+- **Answer-quality evaluation:** `benchmarks/eval_rag.py` scores a small handbook.
+  A larger or messier corpus needs its own set.
 - **PII masking:** guardrails in the gateway, for example with Presidio.
 
 ## Need help?
