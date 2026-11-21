@@ -1,3 +1,5 @@
+<p align="center"><img src="assets/logo.svg" alt="In-House AI" width="88" height="88"></p>
+
 <h1 align="center">In-House AI</h1>
 
 <p align="center"><b>Private AI for your documents.</b><br>Runs on your hardware. Nothing leaves it.</p>
