@@ -77,15 +77,18 @@ answers are not stored unless you switch that on.
   `docker compose exec litellm python -c "import urllib.request as u; r=u.Request('http://localhost:4000/spend/logs', headers={'Authorization':'Bearer '+__import__('os').environ['LITELLM_MASTER_KEY']}); print(u.urlopen(r).read().decode())"`
 - **Prompts and answers:** to record them for debugging, add
   `store_prompts_in_spend_logs: true` under `general_settings` in `litellm/config.yaml` and
-  restart LiteLLM. Anyone with database or admin access can then read user conversations,
-  so enable it only if that is acceptable.
+  restart LiteLLM (or use the toggle under Logs → Settings in the admin page). Anyone with
+  database or admin access can then read user conversations, and this stack's pinned
+  LiteLLM (v1.106.6) does not mask secrets in stored prompts, so anything a user pastes is
+  kept as typed. Enable it only if that is acceptable.
 
 **When to add a dedicated tracing tool.** Add one when you need to follow one request across
-several calls, read and score real conversations, compare prompt versions, or tell which
-person asked (by default every call arrives under Open WebUI's one key). It costs extra
-services and keeps conversations in a second place, so most teams running the assistant for
-others can skip it. LiteLLM can send calls to tools such as Langfuse through its callbacks if
-you do need one.
+several calls, read and score real conversations, or compare prompt versions. To see who
+asked you don't need one: by default every call arrives under Open WebUI's one key, but
+Open WebUI can forward the user's identity to LiteLLM (see LiteLLM's Open WebUI guide). A
+dedicated tool costs extra services and keeps conversations in a second place, so most teams
+running the assistant for others can skip it. LiteLLM can send calls to tools such as
+Langfuse through its callbacks if you do need one.
 
 ## Scope: what's deliberately not included
 
