@@ -18,12 +18,13 @@ One Docker Compose file, built on established open-source projects. No AI provid
 your prompts or your files.
 
 ```bash
-git clone https://github.com/razajahangir/in-house-ai.git && cd in-house-ai
-cp .env.example .env      # add your secrets
-docker compose up -d
+curl -fsSL https://inhouse-ai.razajahangir.dev/install.sh | bash
 ```
 
-Then open `http://localhost:3000`. The [setup guide](docs/setup.md) walks through every step.
+Needs Docker with Compose v2, git and openssl. The script asks how you want to reach it
+(Tailscale, Cloudflare or this machine only) and which model server to use, then starts the
+stack. Open `http://localhost:3000` and create the first account; it becomes the admin.
+Prefer to do it by hand? See the [setup guide](docs/setup.md).
 
 ## How a question is answered
 
@@ -60,4 +61,4 @@ else changes. [Measure your own hardware](docs/benchmarks.md).
 Want it deployed on your hardware or tailored to your tools?
 [LinkedIn](https://www.linkedin.com/in/raza-jahangir) · [Upwork](https://www.upwork.com/freelancers/developerraza)
 
-<sub>Each component keeps its own licence. See [third-party software](docs/customize.md#third-party-software).</sub>
+<sub>MIT licensed. Each component keeps its own licence. See [third-party software](docs/customize.md#third-party-software).</sub>

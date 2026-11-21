@@ -78,7 +78,7 @@ benchmark row for your hardware.
 | RAM | 24 GB |
 | Chat model | `qwen3:4b-instruct` (4.0B, Q4_K_M, Apache 2.0) |
 | Embedding model | `nomic-embed-text` |
-| Runtime | Ollama x.y.z (llama.cpp), context 8,192 tokens |
+| Runtime | Ollama (llama.cpp), context 8,192 tokens |
 
 The stack also runs on CPU only; results from a second machine are below.
 

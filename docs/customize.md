@@ -35,20 +35,21 @@ For confidential data, decide which you're comfortable with.
 
 ## Scaling up: bigger GPUs and servers
 
-1. On a larger GPU server, replace the `ollama` and `ollama-init` services with a vLLM
-   container supported by that server, with accelerator access and model storage mounted
-   read-only from the host. A workstation, multi-GPU server, or NVIDIA DGX Spark are all
-   possible targets; select a backend and configuration suited to the hardware.
-2. In `litellm/config.yaml`, change the model entry:
+1. Enable the bundled vLLM service (NVIDIA GPU required): add `vllm` to `COMPOSE_PROFILES` and
+   set `VLLM_MODEL` (a Hugging Face model) in `.env`. The installer does this for you when you
+   choose vLLM. The service is served as `local-chat`. Keep Ollama running: embeddings
+   (`local-embed`) still use it.
+2. In `litellm/config.yaml`, point the chat model at vLLM:
 
    ```yaml
    - model_name: local-chat
      litellm_params:
-       model: hosted_vllm/<model-name>
+       model: hosted_vllm/local-chat
        api_base: http://vllm:8000/v1
    ```
 
-   Open WebUI doesn't change at all. It still asks for `local-chat`.
+   Open WebUI doesn't change at all. It still asks for `local-chat`. Tune the `vllm` service's
+   flags (`--max-model-len`, `--gpu-memory-utilization`) for your GPU.
 3. Pin every image to an exact version tag (no `latest` or `main`).
 4. Remove the `127.0.0.1:3000` port binding from `open-webui`.
 5. Check the target architecture before deploying. For example, the DGX Spark is ARM64;

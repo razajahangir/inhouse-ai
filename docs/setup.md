@@ -1,5 +1,7 @@
 # Setup guide
 
+Fastest path: `curl -fsSL https://inhouse-ai.razajahangir.dev/install.sh | bash` asks two questions (access and model server), writes `.env` with fresh secrets and starts the stack. [Read the script](https://inhouse-ai.razajahangir.dev/install.sh) first if you like. The steps below do the same by hand.
+
 Ten steps from a fresh Ubuntu machine to a private assistant. The [website](https://inhouse-ai.razajahangir.dev) has the same guide in a friendlier layout.
 
 ## Step 1: Install Docker Engine (Ubuntu)
@@ -59,7 +61,7 @@ Skip this on a CPU-only machine, and delete the `deploy:` block from the `ollama
 ## Step 2: Get the project
 
 ```bash
-git clone https://github.com/razajahangir/in-house-ai.git
+git clone https://github.com/razajahangir/inhouse-ai.git in-house-ai
 cd in-house-ai
 ```
 
@@ -94,7 +96,7 @@ Edit `.env`:
 - `LITELLM_MASTER_KEY`: a random value **starting with `sk-`**, e.g. `sk-<random>`.
 - `CHAT_MODEL` / `EMBED_MODEL`: e.g. `qwen3:4b-instruct` / `nomic-embed-text`. The chat model
   name must match the one in `litellm/config.yaml`.
-- `COMPOSE_PROFILES`: which remote-access options to start. `tailscale` (private, recommended
+- `COMPOSE_PROFILES`: which optional services to start (empty by default). `tailscale` (private, recommended
   for sensitive data), `cloudflare`, both, or empty for local-only access.
 - `TS_AUTHKEY`: a Tailscale auth key (only with the `tailscale` profile; see Step 4).
 - `CLOUDFLARE_TUNNEL_TOKEN`: only with the `cloudflare` profile; filled in during Step 4.
